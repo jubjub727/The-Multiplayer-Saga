@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>tmps_server</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\networking\networking.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="lswtss-omp-game-api-angelscript">
+      <HintPath>D:\lswtss-omp-export-latest\workspaces\dotnet\game-api-angelscript\bin\Release\net8.0\lswtss-omp-game-api-angelscript.dll</HintPath>
+    </Reference>
+    <Reference Include="lswtss-omp-game-api-core">
+      <HintPath>D:\lswtss-omp-export-latest\workspaces\dotnet\game-api-core\bin\Release\net8.0\lswtss-omp-game-api-core.dll</HintPath>
+    </Reference>
+    <Reference Include="system-runtime-interop-services-ext">
+      <HintPath>D:\lswtss-omp-export-latest\workspaces\dotnet\system-runtime-interop-services-ext\bin\Release\net8.0\system-runtime-interop-services-ext.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

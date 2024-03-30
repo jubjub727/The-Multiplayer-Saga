@@ -30,7 +30,7 @@ namespace tmpsserver
         {
             Serialization.LoadAvailableTypes();
 
-            RiptideLogger.Log(LogType.Info, "SERVER", "Loaded Types");
+            RiptideLogger.Log(LogType.Info, "TMPS", "Loaded Types");
 
             RiptideServer.ClientConnected += PlayerConnected;
             RiptideServer.ClientDisconnected += PlayerLeft;
@@ -93,7 +93,7 @@ namespace tmpsserver
                 }
             }
 
-            RiptideLogger.Log(LogType.Error, "SERVER", String.Format("Could not process NetworkedPlayer with PlayerId - {0}", networkedPlayer.PlayerId));
+            RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Could not process NetworkedPlayer with PlayerId - {0}", networkedPlayer.PlayerId));
         }
 
         private void HandleTickReply(NetworkMessage tickMessage)
@@ -119,7 +119,7 @@ namespace tmpsserver
                     HandleTickReply(tickMessage);
                     break;
                 default:
-                    RiptideLogger.Log(LogType.Error, "SERVER", String.Format("Received Uknown Message ID - {0}", messageReceivedArgs.MessageId));
+                    RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Received Uknown Message ID - {0}", messageReceivedArgs.MessageId));
                     break;
             }
         }
@@ -128,7 +128,7 @@ namespace tmpsserver
         {
             NetworkedPlayer player = new NetworkedPlayer(playerConnectedEvent.Client.Id);
             PlayerPool.Add(player);
-            RiptideLogger.Log(LogType.Info, "SERVER", String.Format("Added Player to PlayerPool with ID - {0}", playerConnectedEvent.Client.Id));
+            RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Added Player to PlayerPool with ID - {0}", playerConnectedEvent.Client.Id));
         }
 
         private void PlayerLeft(object sender, ServerDisconnectedEventArgs playerDisconnectedEvent)
@@ -138,11 +138,11 @@ namespace tmpsserver
                 if (PlayerPool[i].PlayerId == playerDisconnectedEvent.Client.Id)
                 {
                     PlayerPool.RemoveAt(i);
-                    RiptideLogger.Log(LogType.Info, "SERVER", String.Format("Removed Player from PlayerPool with ID - {0}", playerDisconnectedEvent.Client.Id));
+                    RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Removed Player from PlayerPool with ID - {0}", playerDisconnectedEvent.Client.Id));
                     return;
                 }
             }
-            RiptideLogger.Log(LogType.Error, "SERVER", String.Format("Couldn't find leaving Player with ID - {0}", playerDisconnectedEvent.Client.Id));
+            RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Couldn't find leaving Player with ID - {0}", playerDisconnectedEvent.Client.Id));
         }
 
         public GameServer(ushort port, ushort maxPlayers)

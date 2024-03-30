@@ -21,7 +21,7 @@ namespace tmpsserver
         public ushort Port;
         public ushort MaxPlayers;
 
-        public List<Player> PlayerPool = new List<Player>();
+        public List<NetworkedPlayer> PlayerPool = new List<NetworkedPlayer>();
 
         private UInt64 TickCount = 0;
 
@@ -67,11 +67,8 @@ namespace tmpsserver
 
             List<DataSegment> dataSegmentList = new List<DataSegment>();
 
-            foreach (Player player in PlayerPool)
+            foreach (NetworkedPlayer networkedPlayer in PlayerPool)
             {
-                NetworkedPlayer networkedPlayer = new NetworkedPlayer(player.PlayerId);
-                networkedPlayer.Transform = player.Transform;
-
                 DataSegment dataSegment = new DataSegment(networkedPlayer);
                 dataSegmentList.Add(dataSegment);
             }
@@ -88,11 +85,11 @@ namespace tmpsserver
 
         private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)
         {
-            foreach (Player player in PlayerPool)
+            for (int i = 0; i < PlayerPool.Count; i++)
             {
-                if (player.PlayerId == networkedPlayer.PlayerId)
+                if (PlayerPool[i].PlayerId == networkedPlayer.PlayerId)
                 {
-                    player.Transform = networkedPlayer.Transform;
+                    PlayerPool[i] = networkedPlayer;
                 }
             }
 
@@ -129,7 +126,7 @@ namespace tmpsserver
 
         private void PlayerConnected(object sender, ServerConnectedEventArgs playerConnectedEvent)
         {
-            Player player = new Player(playerConnectedEvent.Client.Id);
+            NetworkedPlayer player = new NetworkedPlayer(playerConnectedEvent.Client.Id);
             PlayerPool.Add(player);
             RiptideLogger.Log(LogType.Info, "SERVER", String.Format("Added Player to PlayerPool with ID - {0}", playerConnectedEvent.Client.Id));
         }

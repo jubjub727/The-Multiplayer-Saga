@@ -12,7 +12,7 @@ namespace Networking
         public int writeHead = 0;
         public int readHead = 0;
         public Byte[] data;
-        public Tick tick;
+        public NetworkMessage tick;
 
         public void WriteString(string input)
         {
@@ -143,7 +143,7 @@ namespace Networking
             return data;
         }
 
-        public Tick Deserialize()
+        public NetworkMessage Deserialize()
         {
             tick.Size = ReadUInt32();
             tick.NumberOfDataSegments = ReadInt32();
@@ -159,13 +159,13 @@ namespace Networking
 
         public Packet(UInt32 size)
         {
-            tick = new Tick();
+            tick = new NetworkMessage();
             data = new Byte[size];
         }
 
         public Packet(Byte[] packet)
         {
-            tick = new Tick();
+            tick = new NetworkMessage();
             data = packet;
         }
     }

@@ -11,11 +11,14 @@ namespace Networking
 {
     public static class Serialization
     {
+        public static bool TypesLoaded = false;
+
         private static Type[] AvailableTypes;
 
         public static void LoadAvailableTypes()
         {
             AvailableTypes = Assembly.GetExecutingAssembly().GetTypes();
+            TypesLoaded = true;
         }
         private static Networked? GetNetworkedAttribute(Attribute[] attributes)
         {

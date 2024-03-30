@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Networking
 {
-    public class Tick
+    public class NetworkMessage
     {
         public UInt32 Size = 0;
         public Int32 NumberOfDataSegments;
         public DataSegment[]? DataSegments;
 
-        public Tick(DataSegment[] dataSegments)
+        public NetworkMessage(DataSegment[] dataSegments)
         {
             // Increment Size with the value of its own size (4 bytes)
             Size += sizeof(UInt32);
@@ -29,7 +29,7 @@ namespace Networking
             }
         }
 
-        public Tick()
+        public NetworkMessage()
         {
             
         }

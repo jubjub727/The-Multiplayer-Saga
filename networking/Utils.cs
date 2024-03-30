@@ -13,7 +13,7 @@ namespace Networking
             return float.IsNaN(x) || float.IsInfinity(x);
         }
 
-        public static bool IsBadTransform(TransformData transform)
+        public static bool IsBadTransform(Transform transform)
         {
             if (IsBadFloat(transform.X))
             {

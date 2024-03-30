@@ -1,28 +1,20 @@
 ﻿using Networking;
 
 Serialization.LoadAvailableTypes();
-
 Console.WriteLine("Loaded Types");
 
-while (true)
-{
-    TransformData transformData = new TransformData(1337);
-    transformData.X = 1.45f;
+NetworkedPlayer player = new NetworkedPlayer(1337);
+player.Name = "poopypoop";
+player.Transform.X = 4.5f;
 
-    AnimationData animationData = new AnimationData("testAnimation");
+DataSegment[] dataSegments = new DataSegment[1];
+dataSegments[0] = new DataSegment(player);
 
-    DataSegment[] dataSegments = new DataSegment[2];
-    dataSegments[0] = new DataSegment(transformData);
-    dataSegments[1] = new DataSegment(animationData);
+Tick tick = new Tick(dataSegments);
+Byte[] buffer = tick.Serialize();
 
+Packet packet = new Packet(buffer);
+Tick newTick = packet.Deserialize();
 
-    Tick tick = new Tick(dataSegments);
-
-    Byte[] buffer = tick.Serialize();
-
-    Packet packet = new Packet(buffer);
-
-    Tick newTick = packet.Deserialize();
-
-    Console.WriteLine(newTick.DataSegments[0].Data.PlayerId);
-}
+Console.WriteLine(newTick.DataSegments[0].Data.Name);
+Console.WriteLine(player.Transform.X);

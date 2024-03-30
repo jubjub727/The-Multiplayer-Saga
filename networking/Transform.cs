@@ -7,12 +7,8 @@ using System.Threading.Tasks;
 
 namespace Networking
 {
-    // Type Index 1
-    [Networked(1)]
-    public class TransformData
+    public class Transform
     {
-        public UInt16 PlayerId;
-
         // Vec3 Position
         public float X = 0f;
         public float Y = 0f;
@@ -23,12 +19,7 @@ namespace Networking
         public float RY = 0f;
         public float RZ = 0f;
 
-        public TransformData(UInt16 playerID)
-        {
-            PlayerId = playerID;
-        }
-
-        public TransformData()
+        public Transform()
         {
             
         }

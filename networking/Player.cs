@@ -11,7 +11,7 @@ namespace Networking
     public class Player
     {
         public UInt16 PlayerId;
-        public TransformData Transform;
+        public Transform Transform;
         public List<PreviousTransform> PreviousTransforms = new List<PreviousTransform>();
 
         public apiEntity.Handle Entity;
@@ -22,17 +22,17 @@ namespace Networking
         {
             PlayerId = playerId;
             Entity = entity;
-            Transform = new TransformData(playerId);
+            Transform = new Transform();
         }
 
         public Player(UInt16 playerId)
         {
             PlayerId = playerId;
             IsLocal = true;
-            Transform = new TransformData(playerId);
+            Transform = new Transform();
         }
 
-        public void SetTransform(TransformData transform, long elapsedTime)
+        public void SetTransform(Transform transform, long elapsedTime)
         {
             if (Utils.IsBadTransform(transform))
             {
@@ -48,7 +48,7 @@ namespace Networking
             }
         }
 
-        public void ApplyTransform(TransformData transform)
+        public void ApplyTransform(Transform transform)
         {
             apiTransformComponent.Handle transformComponent = (apiTransformComponent.Handle)(nint)Entity.FindComponentByTypeName("apiTransformComponent");
 

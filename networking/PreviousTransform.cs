@@ -8,10 +8,10 @@ namespace Networking
 {
     public class PreviousTransform
     {
-        public TransformData Transform;
+        public Transform Transform;
         public long ElapsedTime;
 
-        public PreviousTransform(TransformData transform, long elapsedTime)
+        public PreviousTransform(Transform transform, long elapsedTime)
         {
             Transform = transform;
             ElapsedTime = elapsedTime;

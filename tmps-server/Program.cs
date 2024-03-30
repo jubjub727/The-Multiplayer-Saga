@@ -24,5 +24,5 @@ while (true)
 
     Tick newTick = packet.Deserialize();
 
-    Console.WriteLine(newTick.DataSegments[1].Data.Animation);
+    Console.WriteLine(newTick.DataSegments[0].Data.PlayerId);
 }

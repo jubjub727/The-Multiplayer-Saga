@@ -11,6 +11,7 @@ namespace Networking
     public class AnimationData
     {
         public string Animation = "";
+
         public AnimationData(string animation)
         {
             Animation = animation;

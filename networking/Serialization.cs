@@ -71,6 +71,10 @@ namespace Networking
                     return packet.ReadUInt16();
                 case TypeCode.String:
                     return packet.ReadString();
+                case TypeCode.Object:
+                    var value = Activator.CreateInstance(field.FieldType);
+                    IterateFieldsAndRead(packet, value);
+                    return value;
                 default:
                     throw new Exception("Found Unsupported Field on Networked class");
             }
@@ -127,6 +131,14 @@ namespace Networking
                         throw new Exception("Received Null Value for Field (" + field.Name + ")");
                     }
                     packet.WriteString(stringValue);
+                    return;
+                case TypeCode.Object:
+                    var value = (object?)field.GetValue(data);
+                    if (value == null)
+                    {
+                        throw new Exception("Received Null Value for Field (" + field.Name + ")");
+                    }
+                    IterateFieldsAndWrite(packet, value);
                     return;
                 default:
                     throw new Exception("Found Unsupported Field on Networked class");
@@ -211,6 +223,10 @@ namespace Networking
                 if (field.FieldType == typeof(string))
                 {
                     size += GetStringSize(field.GetValue(data));
+                }
+                else if (Type.GetTypeCode(field.FieldType) == TypeCode.Object)
+                {
+                    size += IterateFieldsAndCount(field.FieldType, field.GetValue(data));
                 }
                 else
                 {

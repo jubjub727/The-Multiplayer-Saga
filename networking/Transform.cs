@@ -19,6 +19,35 @@ namespace Networking
         public float RY = 0f;
         public float RZ = 0f;
 
+        public bool IsBadTransform()
+        {
+            if (Utils.IsBadFloat(X))
+            {
+                return true;
+            }
+            if (Utils.IsBadFloat(Y))
+            {
+                return true;
+            }
+            if (Utils.IsBadFloat(Z))
+            {
+                return true;
+            }
+            if (Utils.IsBadFloat(RX))
+            {
+                return true;
+            }
+            if (Utils.IsBadFloat(RY))
+            {
+                return true;
+            }
+            if (Utils.IsBadFloat(RZ))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public Transform()
         {
             

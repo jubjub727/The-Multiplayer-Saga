@@ -8,38 +8,12 @@ namespace Networking
 {
     public class Utils
     {
+        public const ushort SERVER_TICK_MESSAGE_ID = 1;
+        public const ushort CLIENT_TICK_MESSAGE_ID = 2;
+
         public static bool IsBadFloat(float x)
         {
             return float.IsNaN(x) || float.IsInfinity(x);
-        }
-
-        public static bool IsBadTransform(Transform transform)
-        {
-            if (IsBadFloat(transform.X))
-            {
-                return true;
-            }
-            if (IsBadFloat(transform.Y))
-            {
-                return true;
-            }
-            if (IsBadFloat(transform.Z))
-            {
-                return true;
-            }
-            if (IsBadFloat(transform.RX))
-            {
-                return true;
-            }
-            if (IsBadFloat(transform.RY))
-            {
-                return true;
-            }
-            if (IsBadFloat(transform.RZ))
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

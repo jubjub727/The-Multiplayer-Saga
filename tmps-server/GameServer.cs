@@ -13,9 +13,6 @@ namespace tmpsserver
 {
     public class GameServer
     {
-        public const ushort SERVER_TICK_MESSAGE_ID = 1;
-        public const ushort CLIENT_TICK_MESSAGE_ID = 2;
-
         public Server RiptideServer;
 
         public ushort Port;
@@ -75,7 +72,7 @@ namespace tmpsserver
 
             NetworkMessage tick = new NetworkMessage(dataSegmentList.ToArray());
 
-            Message message = Message.Create(MessageSendMode.Unreliable, SERVER_TICK_MESSAGE_ID);
+            Message message = Message.Create(MessageSendMode.Unreliable, Utils.SERVER_TICK_MESSAGE_ID);
             message.AddBytes(tick.Serialize());
 
             RiptideServer.SendToAll(message);
@@ -115,7 +112,7 @@ namespace tmpsserver
             NetworkMessage tickMessage = packet.Deserialize();
             switch(messageReceivedArgs.MessageId)
             {
-                case CLIENT_TICK_MESSAGE_ID:
+                case Utils.CLIENT_TICK_MESSAGE_ID:
                     HandleTickReply(tickMessage);
                     break;
                 default:

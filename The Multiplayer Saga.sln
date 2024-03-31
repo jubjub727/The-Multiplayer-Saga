@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tmps-server", "tmps-server\tmps-server.csproj", "{04348646-FC5E-4389-BF69-CDD20D403FC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tmps-server", "tmps-server\tmps-server.csproj", "{04348646-FC5E-4389-BF69-CDD20D403FC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dummy-client", "dummy-client\dummy-client.csproj", "{B65E932B-6C25-42DD-9DD4-9173D90CF8F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dummy-client", "dummy-client\dummy-client.csproj", "{B65E932B-6C25-42DD-9DD4-9173D90CF8F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "networking", "networking\networking.csproj", "{86DFCEBB-CEC7-48CC-993A-0E8A05745567}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "networking", "networking\networking.csproj", "{86DFCEBB-CEC7-48CC-993A-0E8A05745567}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tmps-client", "tmps-client\tmps-client.csproj", "{1664F53E-8FAF-4C38-9285-9442F0A219D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tmps-client", "tmps-client\tmps-client.csproj", "{1664F53E-8FAF-4C38-9285-9442F0A219D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SceneDumper", "SceneDumper\SceneDumper.csproj", "{AD8E492C-87A7-4EC4-A15C-D34B443C4D4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{1664F53E-8FAF-4C38-9285-9442F0A219D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1664F53E-8FAF-4C38-9285-9442F0A219D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1664F53E-8FAF-4C38-9285-9442F0A219D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD8E492C-87A7-4EC4-A15C-D34B443C4D4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD8E492C-87A7-4EC4-A15C-D34B443C4D4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD8E492C-87A7-4EC4-A15C-D34B443C4D4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD8E492C-87A7-4EC4-A15C-D34B443C4D4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

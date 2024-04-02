@@ -12,6 +12,7 @@ namespace tmpsclient;
 public class Interpolation
 {
     private const int PacketDepth = 5;
+    private const int PacketOffset = 2;
 
     double[] pointsArrayX = new double[PacketDepth];
     double[] pointsArrayY = new double[PacketDepth];
@@ -26,9 +27,6 @@ public class Interpolation
     double[] valuesArrayRY = new double[PacketDepth];
     double[] valuesArrayRZ = new double[PacketDepth];
 
-    long globalElapsedTime = 0;
-    long elapsedTime = 0;
-
     private Stopwatch TimeSinceLastTick;
 
     public Interpolation(Stopwatch timeSinceLastTick)
@@ -40,18 +38,18 @@ public class Interpolation
     {
         foreach (NetworkedPlayer player in PlayerPool)
         {
-            if (player.PreviousTransforms.Count < 5) {
+            if (player.PreviousTransforms.Count < PacketDepth) {
                 continue;
             }
 
-            globalElapsedTime = 0;
-            elapsedTime = 0;
+            long globalElapsedTime = 0;
+            long elapsedTime = 0;
 
             int count = 0;
 
             foreach (PreviousTransform previousTransform in player.PreviousTransforms)
             {
-                if (count < 3)
+                if (count < PacketDepth - PacketOffset)
                 {
                     elapsedTime += previousTransform.ElapsedTime;
                 }

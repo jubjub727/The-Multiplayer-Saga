@@ -30,10 +30,12 @@ public class Node
     public BigInteger Guid;
 
     [JsonIgnore]
-    public string Name;
+    private int IterationCount = 0;
 
     [JsonIgnore]
-    private int IterationCount = 0;
+    private const int GuidOffset = 0x46;
+    [JsonIgnore]
+    private const int Sizeof64Int = 0x8;
 
     public Node(Node parent)
     {
@@ -77,8 +79,8 @@ public class Node
 
     private static BigInteger GetGuid(apiComponent.Handle component)
     {
-        var guidPart1 = Marshal.ReadInt64(component.Ptr + 0x46);
-        var guidPart2 = Marshal.ReadInt64(component.Ptr + 0x4E);
+        var guidPart1 = Marshal.ReadInt64(component.Ptr + GuidOffset);
+        var guidPart2 = Marshal.ReadInt64(component.Ptr + GuidOffset + Sizeof64Int);
 
         return new BigInteger(guidPart2) << 64 | new BigInteger(guidPart1);
     }

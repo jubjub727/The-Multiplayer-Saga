@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using LSWTSS.OMP.Game.Api;
 
 
-namespace LSWTSS.OMP;
+namespace NodeDumper;
 public class Node
 {
     [JsonIgnore]
@@ -187,5 +187,21 @@ public class Node
     public bool IsEntity()
     {
         return Entity != nint.Zero;
+    }
+
+    public void RecurseChildren(string[] componentNames)
+    {
+        if (IsEntity())
+        {
+            if (FindChildComponent(componentNames))
+            {
+                FindAllChildren();
+
+                foreach (Node childNode in Children)
+                {
+                    childNode.RecurseChildren(componentNames);
+                }
+            }
+        }
     }
 }

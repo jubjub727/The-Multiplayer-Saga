@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LSWTSS.OMP.Game.Api;
 using System.Text.Json;
-
+using NodeDumper;
 
 namespace LSWTSS.OMP;
 
@@ -86,25 +86,9 @@ public class TestMod : IDisposable
 
 
 
-        RecurseChildren(rootNode);
+        rootNode.RecurseChildren(componentNames);
 
         File.WriteAllText(@"nodegraph.json", JsonSerializer.Serialize(rootNode));
-    }
-
-    private void RecurseChildren(Node node)
-    {
-        if (node.IsEntity())
-        {
-            if (node.FindChildComponent(componentNames))
-            {
-                node.FindAllChildren();
-
-                foreach (Node childNode in node.Children)
-                {
-                    RecurseChildren(childNode);
-                }
-            }
-        }
     }
 
     public TestMod()

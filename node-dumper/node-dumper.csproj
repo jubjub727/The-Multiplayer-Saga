@@ -2,13 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>node_dumper</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\node-dumper\node-dumper.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="lswtss-omp-game-api-angelscript">

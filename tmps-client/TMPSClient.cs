@@ -21,6 +21,8 @@ public class TMPSClient : IDisposable
 
     private Client RiptideClient;
 
+    private Interpolation Interpolation;
+
     private List<NetworkedPlayer> PlayerPool = new List<NetworkedPlayer>();
 
     private NetworkedPlayer LocalPlayer;
@@ -33,6 +35,8 @@ public class TMPSClient : IDisposable
 
     private void Startup()
     {
+        Interpolation = new Interpolation(TimeSinceLastTick);
+
         RiptideClient.MessageReceived += MessageHandler;
         RiptideClient.ClientConnected += PlayerConnected;
         RiptideClient.ClientDisconnected += PlayerDisconnected;
@@ -40,7 +44,7 @@ public class TMPSClient : IDisposable
 
     public void OnUpdate()
     {
-        if (!_ResourceLoaded && GameUtil.LoadResource())
+        if (!_ResourceLoaded && GameUtil.LoadedResource())
         {
             RiptideClient.Connect(ServerInfo.ConnectionString, useMessageHandlers: false);
 
@@ -63,7 +67,7 @@ public class TMPSClient : IDisposable
 
         RiptideClient.Update();
 
-        //Interp();
+        Interpolation.Interpolate(PlayerPool);
     }
 
     private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)

@@ -47,7 +47,7 @@ namespace tmpsclient
             throw new Exception("Could not create entity");
         }
 
-        public static bool LoadResource()
+        public static bool LoadedResource()
         {
             if (_ResourceLoaded == false && _SceneGraphResourceHandle != nint.Zero)
             {

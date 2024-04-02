@@ -23,6 +23,11 @@ namespace Networking
 
         public void SetTransform(Transform transform, long elapsedTime)
         {
+            if (transform.IsBadTransform())
+            {
+                throw new Exception("Tried to set bad Transform");
+            }
+
             PreviousTransform previousTransform = new PreviousTransform(transform, elapsedTime);
             PreviousTransforms.Add(previousTransform);
 
@@ -42,9 +47,14 @@ namespace Networking
             PlayerId = playerId;
             Transform = new Transform();
         }
-        public NetworkedPlayer()
+        public void ApplyTransform(Transform transform)
         {
+            if (transform.IsBadTransform())
+            {
+                throw new Exception("Tried to apply bad Transform");
+            }
 
+            // Do stuff here to apply the transform
         }
     }
 }

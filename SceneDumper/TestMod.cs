@@ -113,15 +113,6 @@ public class TestMod : IDisposable
         );
 
         doubleJumpContextOnEnterMethodHook.Enable();
-
-        /*nttUniverse = GetUniverseGlobalFunc.Execute();
-
-        if (nttUniverse == nint.Zero)
-        {
-            throw new Exception("Cannot get nttUniverse");
-        }*/
-
-
     }
 
     public void OnUpdate()

@@ -105,8 +105,6 @@ public class Node
         {
             child.Entity = (apiEntity.Handle)(nint)component;
             child.Component = component;
-
-            child.Name = child.Entity.GetName();
         }
         else
         {

@@ -11,7 +11,6 @@ using Networking;
 using Riptide;
 using Riptide.Utils;
 using tmpsclient;
-using static LSWTSS.OMP.Game.Api.CommonEvents.Interaction.Data;
 
 namespace LSWTSS.OMP;
 

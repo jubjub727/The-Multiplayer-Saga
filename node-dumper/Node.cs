@@ -115,8 +115,6 @@ public class Node
 
         child.Guid = GetGuid(child.Component);
 
-        //Console.WriteLine("Found Child with label - " + child.Label);
-
         return child;
     }
 

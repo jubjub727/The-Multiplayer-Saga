@@ -25,20 +25,31 @@ namespace tmpsserver
 
         private void Startup()
         {
-            Serialization.LoadAvailableTypes();
-
-            RiptideLogger.Log(LogType.Info, "TMPS", "Loaded Types");
-
             RiptideServer.ClientConnected += PlayerConnected;
             RiptideServer.ClientDisconnected += PlayerLeft;
             RiptideServer.MessageReceived += MessageHandler;
 
+            while (!Serialization.TypesLoaded)
+            {
+                continue;
+            }
+
+            RiptideLogger.Log(LogType.Info, "TMPS", "Finished Loading Types");
+
             RiptideServer.Start(Port, MaxPlayers, 0, false);
+        }
+
+        private void LoadTypes()
+        {
+            Serialization.LoadAvailableTypes();
         }
 
         private void MainLoop()
         {
             Stopwatch timeElapsed = new Stopwatch();
+
+            Thread typeLoadingThread = new Thread(LoadTypes);
+            typeLoadingThread.Start();
 
             Startup();
 

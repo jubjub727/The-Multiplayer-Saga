@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using LSWTSS.OMP.Game.Api;
+using OMP.LSWTSS.Api1;
 using System.Text.Json;
 using NodeDumper;
 
@@ -12,8 +12,8 @@ namespace LSWTSS.OMP;
 
 public class TestMod : IDisposable
 {
-    [DllImport("user32.dll")]
-    static extern short GetAsyncKeyState(int vKey);
+    //[DllImport("user32.dll")]
+    //static extern short GetAsyncKeyState(int vKey);
 
     private const string componentsPath = @"D:\lswtss-omp-export-latest\apiComponentsDumped.txt";
 

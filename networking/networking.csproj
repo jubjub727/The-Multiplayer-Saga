@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="lswtss-omp-game-api-angelscript">
-      <HintPath>D:\lswtss-omp-export-latest\workspaces\dotnet\game-api-angelscript\bin\Release\net8.0\lswtss-omp-game-api-angelscript.dll</HintPath>
+    <Reference Include="omp-lswtss-api1-core">
+      <HintPath>D:\lswtss-omp-jubjub-export\workspaces\dotnet\api1-main\bin\Release\net8.0\omp-lswtss-api1-core.dll</HintPath>
     </Reference>
-    <Reference Include="lswtss-omp-game-api-core">
-      <HintPath>D:\lswtss-omp-export-latest\workspaces\dotnet\game-api-core\bin\Release\net8.0\lswtss-omp-game-api-core.dll</HintPath>
+    <Reference Include="omp-lswtss-api1-main">
+      <HintPath>D:\lswtss-omp-jubjub-export\workspaces\dotnet\api1-main\bin\Release\net8.0\omp-lswtss-api1-main.dll</HintPath>
     </Reference>
     <Reference Include="system-runtime-interop-services-ext">
       <HintPath>D:\lswtss-omp-export-latest\workspaces\dotnet\system-runtime-interop-services-ext\bin\Release\net8.0\system-runtime-interop-services-ext.dll</HintPath>

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using LSWTSS.OMP.Game.Api;
+using OMP.LSWTSS.Api1;
 
 
 namespace NodeDumper;

@@ -1,4 +1,4 @@
-﻿using LSWTSS.OMP.Game.Api;
+﻿using OMP.LSWTSS.Api1;
 using System;
 using System.Collections.Generic;
 using System.Linq;

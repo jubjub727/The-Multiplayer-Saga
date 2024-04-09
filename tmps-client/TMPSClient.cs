@@ -5,14 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using LSWTSS.OMP.Game.Api;
+using OMP.LSWTSS.Api1;
 using MathNet.Numerics;
 using Networking;
 using Riptide;
 using Riptide.Utils;
 using tmpsclient;
 
-namespace LSWTSS.OMP;
+namespace OMP.LSWTSS;
 
 public class TMPSClient : IDisposable
 {
@@ -35,6 +35,9 @@ public class TMPSClient : IDisposable
     private void Startup()
     {
         Interpolation = new Interpolation(TimeSinceLastTick);
+
+        Serialization.LoadAvailableTypes();
+        Console.WriteLine("Finished Loading Types");
 
         RiptideClient.MessageReceived += MessageHandler;
         RiptideClient.ClientConnected += PlayerConnected;

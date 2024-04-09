@@ -1,4 +1,4 @@
-﻿using LSWTSS.OMP.Game.Api;
+﻿using OMP.LSWTSS.Api1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,10 +49,13 @@ namespace tmpsclient
 
         public static bool LoadedResource()
         {
+            Console.WriteLine("Checking if we have already loaded resource");
             if (_ResourceLoaded == false && _SceneGraphResourceHandle != nint.Zero)
             {
+                Console.WriteLine("Checking if Resource Handle Is Loaded");
                 if (_SceneGraphResourceHandle.IsLoaded())
                 {
+                    Console.WriteLine("Resource is loaded");
                     RiptideLogger.Log(LogType.Info, "TMPS", String.Format("LOADED: " + _SceneGraphResourceHandle.get_ResourcePath()));
 
                     _ResourceLoaded = true;
@@ -60,7 +63,6 @@ namespace tmpsclient
                     return true;
                 }
             }
-
             return false;
         }
     }

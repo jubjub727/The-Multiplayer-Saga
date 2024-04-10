@@ -46,7 +46,7 @@ public class TMPSClient : IDisposable
 
     public void OnUpdate()
     {
-        if (!_ResourceLoaded && GameUtil.LoadedResource())
+        if (!_ResourceLoaded && GameUtil.LoadedResource()) // GameUtil.LoadedResource() actually loads the resource here but once _ResourceLoaded is true the function no longer gets called
         {
             RiptideClient.Connect(ServerInfo.ConnectionString, useMessageHandlers: false);
 

@@ -30,7 +30,7 @@ public class TMPSClient : IDisposable
 
     private bool _FirstConnect = false;
 
-    private bool _ResourceLoaded = false;
+    private bool _RiptideConnected = false;
 
     private void Startup()
     {
@@ -46,11 +46,11 @@ public class TMPSClient : IDisposable
 
     public void OnUpdate()
     {
-        if (!_ResourceLoaded && GameUtil.LoadedResource()) // GameUtil.LoadedResource() actually loads the resource here but once _ResourceLoaded is true the function no longer gets called
+        if (!_RiptideConnected && GameUtil.LoadedResource()) // GameUtil.LoadedResource() actually loads the resource here but once _ResourceLoaded is true the function no longer gets called
         {
             RiptideClient.Connect(ServerInfo.ConnectionString, useMessageHandlers: false);
 
-            _ResourceLoaded = true;
+            _RiptideConnected = true;
         }
 
         if (_FirstConnect == true && LocalPlayer.Entity != nint.Zero)

@@ -5,17 +5,21 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using OMP.LSWTSS.Api1;
+using OMP.LSWTSS.CApi1;
 using MathNet.Numerics;
 using Networking;
 using Riptide;
 using Riptide.Utils;
 using tmpsclient;
+using System.Runtime.InteropServices;
 
 namespace OMP.LSWTSS;
 
 public class TMPSClient : IDisposable
 {
+    delegate nint CreateUniverse(nint ptr, nint name);
+    CFuncHook1<CreateUniverse>? CreateUniverseMethodHook;
+
     ServerInfo ServerInfo = new ServerInfo(@"ipaddress.data");
 
     private Client RiptideClient;
@@ -34,14 +38,59 @@ public class TMPSClient : IDisposable
 
     private void Startup()
     {
+        SetupHooks();
+
+        RiptideLogger.Log(LogType.Info, "TMPS", "Finished setting up hooks");
+
         Interpolation = new Interpolation(TimeSinceLastTick);
 
         Serialization.LoadAvailableTypes();
-        Console.WriteLine("Finished Loading Types");
+
+        RiptideLogger.Log(LogType.Info, "TMPS", "Finished loading types");
 
         RiptideClient.MessageReceived += MessageHandler;
         RiptideClient.ClientConnected += PlayerConnected;
         RiptideClient.ClientDisconnected += PlayerDisconnected;
+    }
+
+    private void SetupHooks()
+    {
+        CreateUniverseMethodHook = new(
+            NativeFunc.GetPtr(GameUtil.CreateUniverseOffset),
+            (ptr, cStringName) =>
+            {
+                unsafe
+                {
+                    if (cStringName != 0)
+                    {
+                        string? name = Marshal.PtrToStringAnsi(cStringName);
+
+                        if (name != null)
+                        {
+                            if (name == GameUtil.UniverseName)
+                            {
+                                GameUtil.MainUniverse = (nttUniverse.Handle)ptr;
+                            }
+                            else
+                            {
+                                RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Received uknown universe name - {0}", name));
+                            }
+                        }
+                        else
+                        {
+                            RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Couldn't convert CreateUniverse name pointer to a string"));
+                        }
+                    }
+                    else
+                    {
+                        RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Received CreateUniverse call with 0 pointer"));
+                    }
+                }
+                return CreateUniverseMethodHook!.Trampoline!(ptr, cStringName);
+            }
+        );
+
+        CreateUniverseMethodHook.Enable();
     }
 
     public void OnUpdate()
@@ -149,11 +198,11 @@ public class TMPSClient : IDisposable
                 apiEntity.Handle entity = (apiEntity.Handle)PlayerPool[i].Entity;
                 entity.Delete();
                 PlayerPool.RemoveAt(i);
-                Console.WriteLine("Player Left with ID - {0}", playerDisconnectedEvent.Id);
+                RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Player left with ID - {0}", playerDisconnectedEvent.Id));
                 return;
             }
         }
-        Console.WriteLine("Couldn't find leaving Player with ID - {0}", playerDisconnectedEvent.Id);
+        RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Couldn't find leaving Player with ID - {0}", playerDisconnectedEvent.Id));
     }
 
     public TMPSClient()

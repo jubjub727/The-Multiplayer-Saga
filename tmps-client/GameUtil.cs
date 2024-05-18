@@ -1,4 +1,4 @@
-﻿using OMP.LSWTSS.Api1;
+﻿using OMP.LSWTSS.CApi1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +7,21 @@ using System.Threading.Tasks;
 using Networking;
 using System.Net;
 using Riptide.Utils;
+using System.Runtime.InteropServices;
 
 namespace tmpsclient
 {
     public static class GameUtil
     {
         delegate nint nttSceneGraphResourceConstructor(nint handle, int something);
+
+        public static uint CreateUniverseOffset = 0x2E47420;
+
+        public static uint SceneGraphResourceConstructorOffset = 0x2dcde60;
+
+        public static string UniverseName = "MainUniverse";
+
+        public static nttUniverse.Handle MainUniverse = (nttUniverse.Handle)nint.Zero;
 
         public static PlayerControlSystem.Handle _PlayerControlSystemHandle;
 
@@ -49,21 +58,66 @@ namespace tmpsclient
 
         public static bool LoadedResource()
         {
-            Console.WriteLine("Checking if we have already loaded resource");
-            if (_ResourceLoaded == false && _SceneGraphResourceHandle != nint.Zero)
+            if (_ResourceLoaded == false)
             {
-                Console.WriteLine("Checking if Resource Handle Is Loaded");
-                if (_SceneGraphResourceHandle.IsLoaded())
+                if (_SceneGraphResourceHandle != nint.Zero)
                 {
-                    Console.WriteLine("Resource is loaded");
-                    RiptideLogger.Log(LogType.Info, "TMPS", String.Format("LOADED: " + _SceneGraphResourceHandle.get_ResourcePath()));
+                    if (_SceneGraphResourceHandle.IsLoaded())
+                    {
+                        RiptideLogger.Log(LogType.Info, "TMPS", String.Format("LOADED: " + _SceneGraphResourceHandle.get_ResourcePath()));
 
-                    _ResourceLoaded = true;
+                        _ResourceLoaded = true;
 
-                    return true;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (MainUniverse != nint.Zero)
+                    {
+                        StartLoadingResourceHandle();
+                        return false;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
-            return false;
+
+            return true;
+        }
+
+        private static void StartLoadingResourceHandle()
+        {
+            if (MainUniverse == nint.Zero)
+            {
+                RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Tried to load resource handle before MainUniverse was set"));
+
+                throw new Exception("Tried to access MainUniverse before it was assigned a value");
+            }
+
+            _PlayerControlSystemHandle = PlayerControlSystem.GetFromGlobalFunc.Execute(MainUniverse);
+
+            nttSceneGraphResourceConstructor _nttSceneGraphResourceConstructor = Marshal.GetDelegateForFunctionPointer<nttSceneGraphResourceConstructor>(NativeFunc.GetPtr(SceneGraphResourceConstructorOffset));
+
+            nint _nttSceneGraphResourceRawHandle = Marshal.AllocHGlobal(0x88);
+
+            for (int i = 0; i < 0x88; i++)
+            {
+                Marshal.WriteByte(_nttSceneGraphResourceRawHandle, i, 0);
+            }
+
+            _nttSceneGraphResourceConstructor(_nttSceneGraphResourceRawHandle, 2);
+
+            _SceneGraphResourceHandle = (nttSceneGraphResourceHandle.Handle)_nttSceneGraphResourceRawHandle;
+
+            _SceneGraphResourceHandle.set_ResourcePath("Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked");
+            _SceneGraphResourceHandle.AsyncLoad();
         }
     }
 }

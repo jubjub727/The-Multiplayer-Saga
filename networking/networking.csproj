@@ -8,11 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="omp-lswtss-api1-core">
-      <HintPath>D:\lswtss-omp-jubjub-export\workspaces\dotnet\api1-main\bin\Release\net8.0\omp-lswtss-api1-core.dll</HintPath>
+    <Reference Include="omp-lswtss-c-api1-core">
+      <HintPath>H:\SteamLibrary\steamapps\common\LEGO Star Wars - The Skywalker Saga\mods\c-api1\omp-lswtss-c-api1-core.dll</HintPath>
     </Reference>
-    <Reference Include="omp-lswtss-api1-main">
-      <HintPath>D:\lswtss-omp-jubjub-export\workspaces\dotnet\api1-main\bin\Release\net8.0\omp-lswtss-api1-main.dll</HintPath>
+    <Reference Include="omp-lswtss-c-api1-main">
+      <HintPath>H:\SteamLibrary\steamapps\common\LEGO Star Wars - The Skywalker Saga\mods\c-api1\omp-lswtss-c-api1-main.dll</HintPath>
+    </Reference>
+    <Reference Include="omp-lswtss-c-api1-manager">
+      <HintPath>H:\SteamLibrary\steamapps\common\LEGO Star Wars - The Skywalker Saga\mods\c-api1\omp-lswtss-c-api1-manager.dll</HintPath>
     </Reference>
     <Reference Include="system-runtime-interop-services-ext">
       <HintPath>D:\lswtss-omp-export-latest\workspaces\dotnet\system-runtime-interop-services-ext\bin\Release\net8.0\system-runtime-interop-services-ext.dll</HintPath>

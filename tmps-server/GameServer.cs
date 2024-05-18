@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OMP.LSWTSS.Api1;
+using OMP.LSWTSS.CApi1;
 using Networking;
 using Riptide;
 using Riptide.Utils;

@@ -12,11 +12,10 @@ using Riptide;
 using Riptide.Utils;
 using tmpsclient;
 using System.Runtime.InteropServices;
-using static tmpsclient.GameUtil;
 
 namespace OMP.LSWTSS;
 
-public class TMPSClient : IDisposable
+public class TMPSClient
 {
     [DllImport("user32.dll")]
     static extern short GetAsyncKeyState(int vKey);
@@ -67,6 +66,7 @@ public class TMPSClient : IDisposable
             NativeFunc.GetPtr(GameUtil.CreateUniverseOffset),
             (ptr, cStringName) =>
             {
+                nint retVal = CreateUniverseMethodHook!.Trampoline!(ptr, cStringName);
                 unsafe
                 {
                     if (cStringName != 0)
@@ -77,7 +77,8 @@ public class TMPSClient : IDisposable
                         {
                             if (name == GameUtil.UniverseName)
                             {
-                                GameUtil.MainUniverse = (nttUniverse.Handle)ptr;
+                                GameUtil.MainUniverse = (nttUniverse.Handle)retVal;
+                                RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Retrieved MainUniverse Handle - {0}", retVal));
                             }
                             else
                             {
@@ -94,7 +95,7 @@ public class TMPSClient : IDisposable
                         RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Received CreateUniverse call with 0 pointer"));
                     }
                 }
-                return CreateUniverseMethodHook!.Trampoline!(ptr, cStringName);
+                return retVal;
             }
         );
 
@@ -118,11 +119,11 @@ public class TMPSClient : IDisposable
 
     private void StopProcessingScopes()
     {
-        ApiWorldProcessingScopeDestructorDelegate apiWorldProcessingScopeDestructor = NativeFunc.GetExecute<ApiWorldProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.apiWorldProcessingScopeDestructorOffset));
+        GameUtil.ApiWorldProcessingScopeDestructorDelegate apiWorldProcessingScopeDestructor = NativeFunc.GetExecute<GameUtil.ApiWorldProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.apiWorldProcessingScopeDestructorOffset));
 
         apiWorldProcessingScopeDestructor(GameUtil._apiWorldProcessingScopeHandle);
 
-        nttUniverseProcessingScopeDestructorDelegate nttUniverseProcessingScopeDestructor = NativeFunc.GetExecute<nttUniverseProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.nttUniverseProcessingScopeDestructorOffset));
+        GameUtil.nttUniverseProcessingScopeDestructorDelegate nttUniverseProcessingScopeDestructor = NativeFunc.GetExecute<GameUtil.nttUniverseProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.nttUniverseProcessingScopeDestructorOffset));
 
         nttUniverseProcessingScopeDestructor(GameUtil._nttUniverseProcessingScopeHandle);
     }
@@ -131,6 +132,7 @@ public class TMPSClient : IDisposable
     {
         if (!_ReadyToConnect && (GetAsyncKeyState(PAGE_UP) != 0))
         {
+            RiptideLogger.Log(LogType.Info, "TMPS", "Ready to connect to server");
             _ReadyToConnect = true;
         }
 
@@ -139,6 +141,8 @@ public class TMPSClient : IDisposable
 
     public void OnUpdate()
     {
+        Console.WriteLine("Anyone here?");
+
         if (CheckIfReady() == false) return;
 
         StartProcessingScopes();
@@ -262,15 +266,5 @@ public class TMPSClient : IDisposable
         RiptideClient = new Client();
 
         Startup();
-    }
-
-    public void Dispose()
-    {
-        RiptideClient.Disconnect();
-    }
-
-    ~TMPSClient()
-    {
-        Dispose();
     }
 }

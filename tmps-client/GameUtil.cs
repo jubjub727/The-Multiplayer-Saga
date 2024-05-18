@@ -89,10 +89,13 @@ namespace tmpsclient
         // Checks if the resource is loaded and loads it if it's not loaded
         public static bool LoadedResource()
         {
+            Console.WriteLine("Loading resource stuff");
             if (_ResourceLoaded == false)
             {
+                Console.WriteLine("Resource not loaded");
                 if (_SceneGraphResourceHandle != nint.Zero)
                 {
+                    Console.WriteLine("Resource handle Exists");
                     if (_SceneGraphResourceHandle.IsLoaded())
                     {
                         RiptideLogger.Log(LogType.Info, "TMPS", String.Format("LOADED: " + _SceneGraphResourceHandle.get_ResourcePath()));
@@ -103,6 +106,7 @@ namespace tmpsclient
                     }
                     else
                     {
+                        Console.WriteLine("Resource handle still loading");
                         return false;
                     }
                 }
@@ -110,11 +114,13 @@ namespace tmpsclient
                 {
                     if (MainUniverse != nint.Zero)
                     {
+                        Console.WriteLine("MainUniverse exists");
                         StartLoadingResourceHandle();
                         return false;
                     }
                     else
                     {
+                        Console.WriteLine("MainUniverse doesn't exist");
                         return false;
                     }
                 }
@@ -126,6 +132,7 @@ namespace tmpsclient
         // Start the process of loading our resource
         private static void StartLoadingResourceHandle()
         {
+            Console.WriteLine("Starting to load resource");
             if (MainUniverse == nint.Zero)
             {
                 RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Tried to load resource handle before MainUniverse was set"));

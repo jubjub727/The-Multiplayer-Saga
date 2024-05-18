@@ -147,6 +147,8 @@ namespace tmpsclient
 
             nttSceneGraphResourceConstructor nttSceneGraphResourceConstructor = Marshal.GetDelegateForFunctionPointer<nttSceneGraphResourceConstructor>(NativeFunc.GetPtr(SceneGraphResourceConstructorOffset));
 
+            Console.WriteLine("Retrieved nttSceneGraphResourceConstructor");
+
             CharacterPrefabResourceHandle = (nttSceneGraphResourceHandle.Handle)Marshal.AllocHGlobal(0x88);
 
             for (int i = 0; i < 0x88; i++)
@@ -154,10 +156,19 @@ namespace tmpsclient
                 Marshal.WriteByte(CharacterPrefabResourceHandle, i, 0);
             }
 
+            Console.WriteLine("Allocated CharacterPrefabResourceHandle");
+
             nttSceneGraphResourceConstructor(CharacterPrefabResourceHandle, 2);
 
+            Console.WriteLine("Constructed CharacterPrefabResourceHandle");
+
             CharacterPrefabResourceHandle.set_ResourcePath("Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked");
+
+            Console.WriteLine("Set Resource Path");
+
             CharacterPrefabResourceHandle.AsyncLoad();
+
+            Console.WriteLine("Started AsyncLoad");
         }
 
         // Gets the current ApiWorld

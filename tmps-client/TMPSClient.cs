@@ -25,6 +25,8 @@ public class TMPSClient
     delegate nint CreateUniverse(nint ptr, nint name);
     CFuncHook1<CreateUniverse>? CreateUniverseMethodHook;
 
+    CFuncHook1<GameFramework.UpdateMethod.Delegate>? GameFrameworkUpdateMethodHook;
+
     ServerInfo ServerInfo = new ServerInfo(@"ServerInfo.cfg");
 
     private Client RiptideClient;
@@ -101,33 +103,43 @@ public class TMPSClient
             }
         );
 
+        GameFrameworkUpdateMethodHook = new(
+            GameFramework.UpdateMethod.Ptr,
+            (handle) =>
+            {
+                OnUpdate();
+                return GameFrameworkUpdateMethodHook!.Trampoline!(handle);
+            }
+        );
+
         CreateUniverseMethodHook.Enable();
+        GameFrameworkUpdateMethodHook.Enable();
     }
 
     private void StartProcessingScopes()
     {
-        GameUtil._nttUniverseProcessingScopeHandle = (nttUniverseProcessingScope.Handle)Marshal.AllocHGlobal(0x20);
+        GameUtil.nttUniverseProcessingScopeHandle = (nttUniverseProcessingScope.Handle)Marshal.AllocHGlobal(0x20);
 
         GameUtil.nttUniverseProcessingScopeConstructorDelegate nttUniverseProcessingScopeConstructor = NativeFunc.GetExecute<GameUtil.nttUniverseProcessingScopeConstructorDelegate>(NativeFunc.GetPtr(GameUtil.nttUniverseProcessingScopeConstructorOffset));
 
-        nttUniverseProcessingScopeConstructor(GameUtil._nttUniverseProcessingScopeHandle, GameUtil.GetCurrentApiWorldHandle().GetUniverse(), true);
+        nttUniverseProcessingScopeConstructor(GameUtil.nttUniverseProcessingScopeHandle, GameUtil.GetCurrentApiWorldHandle().GetUniverse(), true);
 
-        GameUtil._apiWorldProcessingScopeHandle = (ApiWorldProcessingScope.Handle)Marshal.AllocHGlobal(0x20);
+        GameUtil.apiWorldProcessingScopeHandle = (ApiWorldProcessingScope.Handle)Marshal.AllocHGlobal(0x20);
 
         GameUtil.ApiWorldProcessingScopeConstructorDelegate apiWorldProcessingScopeConstructor = NativeFunc.GetExecute<GameUtil.ApiWorldProcessingScopeConstructorDelegate>(NativeFunc.GetPtr(GameUtil.ApiWorldProcessingScopeConstructorOffset));
 
-        apiWorldProcessingScopeConstructor(GameUtil._apiWorldProcessingScopeHandle, GameUtil.GetCurrentApiWorldHandle(), true);
+        apiWorldProcessingScopeConstructor(GameUtil.apiWorldProcessingScopeHandle, GameUtil.GetCurrentApiWorldHandle(), true);
     }
 
     private void StopProcessingScopes()
     {
         GameUtil.ApiWorldProcessingScopeDestructorDelegate apiWorldProcessingScopeDestructor = NativeFunc.GetExecute<GameUtil.ApiWorldProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.apiWorldProcessingScopeDestructorOffset));
 
-        apiWorldProcessingScopeDestructor(GameUtil._apiWorldProcessingScopeHandle);
+        apiWorldProcessingScopeDestructor(GameUtil.apiWorldProcessingScopeHandle);
 
         GameUtil.nttUniverseProcessingScopeDestructorDelegate nttUniverseProcessingScopeDestructor = NativeFunc.GetExecute<GameUtil.nttUniverseProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.nttUniverseProcessingScopeDestructorOffset));
 
-        nttUniverseProcessingScopeDestructor(GameUtil._nttUniverseProcessingScopeHandle);
+        nttUniverseProcessingScopeDestructor(GameUtil.nttUniverseProcessingScopeHandle);
     }
 
     private bool CheckIfReady()
@@ -143,8 +155,6 @@ public class TMPSClient
 
     public void OnUpdate()
     {
-        Console.WriteLine("Anyone here?");
-
         if (CheckIfReady() == false) return;
 
         StartProcessingScopes();

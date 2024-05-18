@@ -96,6 +96,7 @@ public class TMPSClient
                         RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Received CreateUniverse call with 0 pointer"));
                     }
                 }
+
                 return retVal;
             }
         );

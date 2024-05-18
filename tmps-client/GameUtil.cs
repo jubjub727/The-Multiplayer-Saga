@@ -13,21 +13,51 @@ namespace tmpsclient
 {
     public static class GameUtil
     {
-        delegate nint nttSceneGraphResourceConstructor(nint handle, int something);
+        // |DELEGATES|
+        public delegate void nttUniverseProcessingScopeConstructorDelegate(nttUniverseProcessingScope.Handle handle, nttUniverse.Handle universe, bool flag);
 
+        public delegate void nttUniverseProcessingScopeDestructorDelegate(nttUniverseProcessingScope.Handle handle);
+
+        public delegate void ApiWorldProcessingScopeConstructorDelegate(ApiWorldProcessingScope.Handle handle, ApiWorld.Handle universe, bool flag);
+
+        public delegate void ApiWorldProcessingScopeDestructorDelegate(ApiWorldProcessingScope.Handle handle);
+
+        public delegate nint nttSceneGraphResourceConstructor(nint handle, int something);
+
+        // |OFFSETS|
         public static uint CreateUniverseOffset = 0x2E47420;
 
         public static uint SceneGraphResourceConstructorOffset = 0x2dcde60;
 
-        public static string UniverseName = "MainUniverse";
+        public static uint CurrentApiWorldOffset = 0x5f129f8;
 
+        public static uint nttUniverseProcessingScopeConstructorOffset = 0x2E4B3F0;
+
+        public static uint ApiWorldProcessingScopeConstructorOffset = 0x2E4C050;
+
+        public static uint apiWorldProcessingScopeDestructorOffset = 0x2E4C110;
+        public static uint nttUniverseProcessingScopeDestructorOffset = 0x2E4B500;
+
+        // |STRING CONSTANTS|
+        public const string UniverseName = "MainUniverse";
+
+        public const string DefaultName = "Bob";
+
+        // |HANDLES|
         public static nttUniverse.Handle MainUniverse = (nttUniverse.Handle)nint.Zero;
 
         public static PlayerControlSystem.Handle _PlayerControlSystemHandle;
 
         public static nttSceneGraphResourceHandle.Handle _SceneGraphResourceHandle;
 
+        public static nttUniverseProcessingScope.Handle _nttUniverseProcessingScopeHandle;
+
+        public static ApiWorldProcessingScope.Handle _apiWorldProcessingScopeHandle;
+
+        // |FLAGS|
         private static bool _ResourceLoaded = false;
+
+        // Creates an entity at the position specified in transform
         public static apiEntity.Handle CreateEntity(Transform transform)
         {
             if (_PlayerControlSystemHandle != nint.Zero)
@@ -56,6 +86,7 @@ namespace tmpsclient
             throw new Exception("Could not create entity");
         }
 
+        // Checks if the resource is loaded and loads it if it's not loaded
         public static bool LoadedResource()
         {
             if (_ResourceLoaded == false)
@@ -92,6 +123,7 @@ namespace tmpsclient
             return true;
         }
 
+        // Start the process of loading our resource
         private static void StartLoadingResourceHandle()
         {
             if (MainUniverse == nint.Zero)
@@ -118,6 +150,12 @@ namespace tmpsclient
 
             _SceneGraphResourceHandle.set_ResourcePath("Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked");
             _SceneGraphResourceHandle.AsyncLoad();
+        }
+
+        // Gets the current ApiWorld
+        public static ApiWorld.Handle GetCurrentApiWorldHandle()
+        {
+            return (ApiWorld.Handle)Marshal.ReadIntPtr(NativeFunc.GetPtr(CurrentApiWorldOffset));
         }
     }
 }

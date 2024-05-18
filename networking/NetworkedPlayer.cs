@@ -42,6 +42,13 @@ namespace Networking
             Transform = transform;
             Entity = entity;
         }
+        public NetworkedPlayer(UInt16 playerId, string name)
+        {
+            PlayerId = playerId;
+            Name = name;
+            Transform = new Transform();
+        }
+
         public NetworkedPlayer(UInt16 playerId)
         {
             PlayerId = playerId;

@@ -12,6 +12,7 @@ using Riptide;
 using Riptide.Utils;
 using tmpsclient;
 using System.Runtime.InteropServices;
+using static tmpsclient.GameUtil;
 
 namespace OMP.LSWTSS;
 
@@ -20,7 +21,7 @@ public class TMPSClient : IDisposable
     delegate nint CreateUniverse(nint ptr, nint name);
     CFuncHook1<CreateUniverse>? CreateUniverseMethodHook;
 
-    ServerInfo ServerInfo = new ServerInfo(@"ipaddress.data");
+    ServerInfo ServerInfo = new ServerInfo(@"ServerInfo.cfg");
 
     private Client RiptideClient;
 
@@ -73,7 +74,7 @@ public class TMPSClient : IDisposable
                             }
                             else
                             {
-                                RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Received uknown universe name - {0}", name));
+                                RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Received uknown universe name \"{0}\"", name));
                             }
                         }
                         else
@@ -93,8 +94,36 @@ public class TMPSClient : IDisposable
         CreateUniverseMethodHook.Enable();
     }
 
+    private void StartProcessingScopes()
+    {
+        GameUtil._nttUniverseProcessingScopeHandle = (nttUniverseProcessingScope.Handle)Marshal.AllocHGlobal(0x20);
+
+        GameUtil.nttUniverseProcessingScopeConstructorDelegate nttUniverseProcessingScopeConstructor = NativeFunc.GetExecute<GameUtil.nttUniverseProcessingScopeConstructorDelegate>(NativeFunc.GetPtr(GameUtil.nttUniverseProcessingScopeConstructorOffset));
+
+        nttUniverseProcessingScopeConstructor(GameUtil._nttUniverseProcessingScopeHandle, GameUtil.GetCurrentApiWorldHandle().GetUniverse(), true);
+
+        GameUtil._apiWorldProcessingScopeHandle = (ApiWorldProcessingScope.Handle)Marshal.AllocHGlobal(0x20);
+
+        GameUtil.ApiWorldProcessingScopeConstructorDelegate apiWorldProcessingScopeConstructor = NativeFunc.GetExecute<GameUtil.ApiWorldProcessingScopeConstructorDelegate>(NativeFunc.GetPtr(GameUtil.ApiWorldProcessingScopeConstructorOffset));
+
+        apiWorldProcessingScopeConstructor(GameUtil._apiWorldProcessingScopeHandle, GameUtil.GetCurrentApiWorldHandle(), true);
+    }
+
+    private void StopProcessingScopes()
+    {
+        ApiWorldProcessingScopeDestructorDelegate apiWorldProcessingScopeDestructor = NativeFunc.GetExecute<ApiWorldProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.apiWorldProcessingScopeDestructorOffset));
+
+        apiWorldProcessingScopeDestructor(GameUtil._apiWorldProcessingScopeHandle);
+
+        nttUniverseProcessingScopeDestructorDelegate nttUniverseProcessingScopeDestructor = NativeFunc.GetExecute<nttUniverseProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.nttUniverseProcessingScopeDestructorOffset));
+
+        nttUniverseProcessingScopeDestructor(GameUtil._nttUniverseProcessingScopeHandle);
+    }
+
     public void OnUpdate()
     {
+        StartProcessingScopes();
+
         if (!_RiptideConnected && GameUtil.LoadedResource()) // GameUtil.LoadedResource() actually loads the resource here but once _RiptideConnected is true the function no longer gets called
         {
             RiptideClient.Connect(ServerInfo.ConnectionString, useMessageHandlers: false);
@@ -111,7 +140,7 @@ public class TMPSClient : IDisposable
 
         if (RiptideClient.IsConnected && _FirstConnect == false)
         {
-            LocalPlayer = new NetworkedPlayer(RiptideClient.Id);
+            LocalPlayer = new NetworkedPlayer(RiptideClient.Id, ServerInfo.Name);
             _FirstConnect = true;
             TimeSinceLastTick.Start();
         }
@@ -119,6 +148,8 @@ public class TMPSClient : IDisposable
         RiptideClient.Update();
 
         Interpolation.Interpolate(PlayerPool);
+
+        StopProcessingScopes();
     }
 
     private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)
@@ -197,8 +228,9 @@ public class TMPSClient : IDisposable
             {
                 apiEntity.Handle entity = (apiEntity.Handle)PlayerPool[i].Entity;
                 entity.Delete();
+                string playerName = PlayerPool[i].Name;
                 PlayerPool.RemoveAt(i);
-                RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Player left with ID - {0}", playerDisconnectedEvent.Id));
+                RiptideLogger.Log(LogType.Info, "TMPS", String.Format("{0} left the game", playerName));
                 return;
             }
         }

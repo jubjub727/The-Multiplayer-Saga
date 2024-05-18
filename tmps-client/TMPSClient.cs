@@ -67,6 +67,7 @@ public class TMPSClient
             (ptr, cStringName) =>
             {
                 nint retVal = CreateUniverseMethodHook!.Trampoline!(ptr, cStringName);
+
                 unsafe
                 {
                     if (cStringName != 0)

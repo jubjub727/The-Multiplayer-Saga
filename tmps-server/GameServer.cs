@@ -101,7 +101,7 @@ namespace tmpsserver
                 }
             }
 
-            RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Could not process NetworkedPlayer with PlayerId - {0}", networkedPlayer.PlayerId));
+            RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Could not process NetworkedPlayer for {0}({1})", networkedPlayer.Name, networkedPlayer.PlayerId));
         }
 
         private void HandleTickReply(NetworkMessage tickMessage)

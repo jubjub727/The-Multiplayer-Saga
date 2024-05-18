@@ -18,6 +18,11 @@ namespace OMP.LSWTSS;
 
 public class TMPSClient : IDisposable
 {
+    [DllImport("user32.dll")]
+    static extern short GetAsyncKeyState(int vKey);
+
+    private const int PAGE_UP = 0x21;
+
     delegate nint CreateUniverse(nint ptr, nint name);
     CFuncHook1<CreateUniverse>? CreateUniverseMethodHook;
 
@@ -36,6 +41,8 @@ public class TMPSClient : IDisposable
     private bool _FirstConnect = false;
 
     private bool _RiptideConnected = false;
+
+    private bool _ReadyToConnect = false;
 
     private void Startup()
     {
@@ -120,8 +127,20 @@ public class TMPSClient : IDisposable
         nttUniverseProcessingScopeDestructor(GameUtil._nttUniverseProcessingScopeHandle);
     }
 
+    private bool CheckIfReady()
+    {
+        if (!_ReadyToConnect && (GetAsyncKeyState(PAGE_UP) != 0))
+        {
+            _ReadyToConnect = true;
+        }
+
+        return _ReadyToConnect;
+    }
+
     public void OnUpdate()
     {
+        if (CheckIfReady() == false) return;
+
         StartProcessingScopes();
 
         if (!_RiptideConnected && GameUtil.LoadedResource()) // GameUtil.LoadedResource() actually loads the resource here but once _RiptideConnected is true the function no longer gets called
@@ -164,14 +183,14 @@ public class TMPSClient : IDisposable
 
         if (_FirstConnect && networkedPlayer.PlayerId != LocalPlayer.PlayerId)
         {
-            var createdEntity = GameUtil.CreateEntity(networkedPlayer.Transform);
+            apiEntity.Handle createdEntity = GameUtil.CreateEntity(networkedPlayer.Transform);
 
-            NetworkedPlayer newPlayer = new NetworkedPlayer(networkedPlayer.PlayerId, createdEntity, networkedPlayer.Transform);
-            newPlayer.SetTransform(networkedPlayer.Transform, TimeSinceLastTick.ElapsedTicks);
+            networkedPlayer.AssignEntity(createdEntity);
+            networkedPlayer.SetTransform(networkedPlayer.Transform, TimeSinceLastTick.ElapsedTicks);
 
-            PlayerPool.Add(newPlayer);
+            PlayerPool.Add(networkedPlayer);
 
-            RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Added new Player to PlayerPool with PlayerId - {0}", networkedPlayer.PlayerId));
+            RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Added {0}({1}) to PlayerPool", networkedPlayer.Name, networkedPlayer.PlayerId));
         }
         
     }

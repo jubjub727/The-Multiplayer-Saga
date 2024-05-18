@@ -25,7 +25,7 @@ namespace Networking
         {
             if (transform.IsBadTransform())
             {
-                throw new Exception("Tried to set bad Transform");
+                throw new Exception("Tried to set bad Transform on NetworkedPlayer");
             }
 
             PreviousTransform previousTransform = new PreviousTransform(transform, elapsedTime);
@@ -36,12 +36,12 @@ namespace Networking
                 PreviousTransforms.RemoveAt(0);
             }
         }
-        public NetworkedPlayer(UInt16 playerId, apiEntity.Handle entity, Transform transform)
+
+        public void AssignEntity(apiEntity.Handle entity)
         {
-            PlayerId = playerId;
-            Transform = transform;
             Entity = entity;
         }
+
         public NetworkedPlayer(UInt16 playerId, string name)
         {
             PlayerId = playerId;
@@ -58,7 +58,7 @@ namespace Networking
         {
             if (transform.IsBadTransform())
             {
-                throw new Exception("Tried to apply bad Transform");
+                throw new Exception("Tried to apply bad Transform on NetworkedPlayer");
             }
 
             // Do stuff here to apply the transform

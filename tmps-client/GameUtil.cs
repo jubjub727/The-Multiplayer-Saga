@@ -36,6 +36,7 @@ namespace tmpsclient
         public static uint ApiWorldProcessingScopeConstructorOffset = 0x2E4C050;
 
         public static uint apiWorldProcessingScopeDestructorOffset = 0x2E4C110;
+
         public static uint nttUniverseProcessingScopeDestructorOffset = 0x2E4B500;
 
         // |STRING CONSTANTS|

@@ -84,10 +84,8 @@ namespace tmpsclient
         {
             if (_ResourceLoaded == false)
             {
-                Console.WriteLine("Resource not loaded");
                 if (CharacterPrefabResourceHandle != nint.Zero)
                 {
-                    Console.WriteLine("Resource handle Exists");
                     if (CharacterPrefabResourceHandle.IsLoaded())
                     {
                         RiptideLogger.Log(LogType.Info, "TMPS", String.Format("LOADED: " + CharacterPrefabResourceHandle.get_ResourcePath()));
@@ -98,13 +96,11 @@ namespace tmpsclient
                     }
                     else
                     {
-                        Console.WriteLine("Resource handle still loading");
                         return false;
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Resource handle doesn't exist");
                     StartLoadingResourceHandle();
                     return false;
                 }

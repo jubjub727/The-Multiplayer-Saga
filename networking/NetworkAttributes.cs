@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Networking
+﻿namespace Networking
 {
     [System.AttributeUsage(System.AttributeTargets.Class)]
     public class Networked : System.Attribute

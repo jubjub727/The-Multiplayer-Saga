@@ -15,9 +15,6 @@ public class TMPSClient
 
     private const int PAGE_UP = 0x21;
 
-    delegate nint CreateUniverse(nint ptr, nint name);
-    CFuncHook1<CreateUniverse>? CreateUniverseMethodHook;
-
     CFuncHook1<GameFramework.UpdateMethod.Delegate>? GameFrameworkUpdateMethodHook;
 
     ServerInfo ServerInfo = new ServerInfo(@"ServerInfo.cfg");
@@ -57,45 +54,6 @@ public class TMPSClient
 
     private void SetupHooks()
     {
-        CreateUniverseMethodHook = new(
-            NativeFunc.GetPtr(GameUtil.CreateUniverseOffset),
-            (ptr, cStringName) =>
-            {
-                nint retVal = CreateUniverseMethodHook!.Trampoline!(ptr, cStringName);
-
-                unsafe
-                {
-                    if (cStringName != 0)
-                    {
-                        string? name = Marshal.PtrToStringAnsi(cStringName);
-
-                        if (name != null)
-                        {
-                            if (name == GameUtil.UniverseName)
-                            {
-                                GameUtil.MainUniverse = (nttUniverse.Handle)retVal;
-                                RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Retrieved MainUniverse Handle - {0}", retVal));
-                            }
-                            else
-                            {
-                                RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Received uknown universe name \"{0}\"", name));
-                            }
-                        }
-                        else
-                        {
-                            RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Couldn't convert CreateUniverse name pointer to a string"));
-                        }
-                    }
-                    else
-                    {
-                        RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Received CreateUniverse call with 0 pointer"));
-                    }
-                }
-
-                return retVal;
-            }
-        );
-
         GameFrameworkUpdateMethodHook = new(
             GameFramework.UpdateMethod.Ptr,
             (handle) =>
@@ -105,7 +63,6 @@ public class TMPSClient
             }
         );
 
-        CreateUniverseMethodHook.Enable();
         GameFrameworkUpdateMethodHook.Enable();
     }
 

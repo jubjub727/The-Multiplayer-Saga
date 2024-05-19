@@ -39,8 +39,6 @@ namespace tmpsclient
         public const string DefaultName = "Bob";
 
         // |HANDLES|
-        public static nttUniverse.Handle MainUniverse = (nttUniverse.Handle)nint.Zero;
-
         public static PlayerControlSystem.Handle PlayerControlSystemHandle;
 
         public static nttSceneGraphResourceHandle.Handle CharacterPrefabResourceHandle;
@@ -122,7 +120,7 @@ namespace tmpsclient
             {
                 RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Tried to load resource but couldn't get universe"));
 
-                throw new Exception("Tried to access MainUniverse before it was assigned a value");
+                throw new Exception("Tried to access current ApiWorld Universe but it did not exist");
             }
 
             PlayerControlSystemHandle = PlayerControlSystem.GetFromGlobalFunc.Execute(GetCurrentApiWorldHandle().GetUniverse());

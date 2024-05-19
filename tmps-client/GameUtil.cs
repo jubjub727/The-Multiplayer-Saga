@@ -90,7 +90,6 @@ namespace tmpsclient
         // Checks if the resource is loaded and loads it if it's not loaded
         public static bool LoadedResource()
         {
-            Console.WriteLine("Loading resource stuff");
             if (_ResourceLoaded == false)
             {
                 Console.WriteLine("Resource not loaded");
@@ -113,41 +112,28 @@ namespace tmpsclient
                 }
                 else
                 {
-                    if (MainUniverse != nint.Zero)
-                    {
-                        Console.WriteLine("MainUniverse exists");
-                        StartLoadingResourceHandle();
-                        return false;
-                    }
-                    else
-                    {
-                        Console.WriteLine("MainUniverse doesn't exist");
-                        return false;
-                    }
+                    Console.WriteLine("Resource handle doesn't exist");
+                    StartLoadingResourceHandle();
+                    return false;
                 }
             }
 
-            return true;
+            return false;
         }
 
         // Start the process of loading our resource
         private static void StartLoadingResourceHandle()
         {
-            Console.WriteLine("Starting to load resource");
-            if (MainUniverse == nint.Zero)
+            if (GetCurrentApiWorldHandle().GetUniverse() == nint.Zero)
             {
-                RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Tried to load resource handle before MainUniverse was set"));
+                RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Tried to load resource but couldn't get universe"));
 
                 throw new Exception("Tried to access MainUniverse before it was assigned a value");
             }
 
-            PlayerControlSystemHandle = PlayerControlSystem.GetFromGlobalFunc.Execute(MainUniverse);
-
-            Console.WriteLine("Retrieved PlayerControlSystemHandle");
+            PlayerControlSystemHandle = PlayerControlSystem.GetFromGlobalFunc.Execute(GetCurrentApiWorldHandle().GetUniverse());
 
             nttSceneGraphResourceConstructor nttSceneGraphResourceConstructor = Marshal.GetDelegateForFunctionPointer<nttSceneGraphResourceConstructor>(NativeFunc.GetPtr(SceneGraphResourceConstructorOffset));
-
-            Console.WriteLine("Retrieved nttSceneGraphResourceConstructor");
 
             CharacterPrefabResourceHandle = (nttSceneGraphResourceHandle.Handle)Marshal.AllocHGlobal(0x88);
 
@@ -156,19 +142,11 @@ namespace tmpsclient
                 Marshal.WriteByte(CharacterPrefabResourceHandle, i, 0);
             }
 
-            Console.WriteLine("Allocated CharacterPrefabResourceHandle");
-
             nttSceneGraphResourceConstructor(CharacterPrefabResourceHandle, 2);
-
-            Console.WriteLine("Constructed CharacterPrefabResourceHandle");
 
             CharacterPrefabResourceHandle.set_ResourcePath("Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked");
 
-            Console.WriteLine("Set Resource Path");
-
             CharacterPrefabResourceHandle.AsyncLoad();
-
-            Console.WriteLine("Started AsyncLoad");
         }
 
         // Gets the current ApiWorld

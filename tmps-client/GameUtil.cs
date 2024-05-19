@@ -112,15 +112,6 @@ namespace tmpsclient
         // Start the process of loading our resource
         private static void StartLoadingResourceHandle()
         {
-            if (GetCurrentApiWorldHandle().GetUniverse() == nint.Zero)
-            {
-                RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Tried to load resource but couldn't get universe"));
-
-                throw new Exception("Tried to access current ApiWorld Universe but it did not exist");
-            }
-
-            PlayerControlSystemHandle = PlayerControlSystem.GetFromGlobalFunc.Execute(GetCurrentApiWorldHandle().GetUniverse());
-
             nttSceneGraphResourceConstructor nttSceneGraphResourceConstructor = Marshal.GetDelegateForFunctionPointer<nttSceneGraphResourceConstructor>(NativeFunc.GetPtr(SceneGraphResourceConstructorOffset));
 
             CharacterPrefabResourceHandle = (nttSceneGraphResourceHandle.Handle)Marshal.AllocHGlobal(0x88);

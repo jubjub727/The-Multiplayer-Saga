@@ -118,23 +118,50 @@ public class TMPSClient
 
         if (_FirstConnect == true && LocalPlayer.Entity != nint.Zero)
         {
+            /*Console.WriteLine("Stopping Processing Scopes");
+            StopProcessingScopes();
+            Console.WriteLine("Getting Local Transform");
             apiTransformComponent.Handle transformComponent = (apiTransformComponent.Handle)(nint)LocalPlayer.Entity.FindComponentByTypeName("apiTransformComponent");
+            Console.WriteLine("Got Local Transform");
             transformComponent.GetPosition(out LocalPlayer.Transform.X, out LocalPlayer.Transform.Y, out LocalPlayer.Transform.Z);
+            Console.WriteLine("Got Position");
             transformComponent.GetRotation(out LocalPlayer.Transform.RX, out LocalPlayer.Transform.RY, out LocalPlayer.Transform.RZ);
+            Console.WriteLine("Got Rotation");
+            StartProcessingScopes();
+            Console.WriteLine("Starting Processing Scopes");*/
         }
 
         if (RiptideClient.IsConnected && _FirstConnect == false)
         {
             LocalPlayer = new NetworkedPlayer(RiptideClient.Id, ServerInfo.Name);
+
+            Console.WriteLine("Created LocalPlayer");
+
+            PlayerControlSystem.Handle _PlayerControlSystemHandle = PlayerControlSystem.GetFromGlobalFunc.Execute(GameUtil.GetCurrentApiWorldHandle().GetUniverse());
+
+            Console.WriteLine("Retrieved PlayerControlSystem");
+
+            apiEntity.Handle _LocalPlayerEntity = _PlayerControlSystemHandle.GetPlayerEntityForPlayerIdx(0);
+            Console.WriteLine("Retrieved LocalPlayerEntity - {0}", (nint)_LocalPlayerEntity);
+
+            LocalPlayer.AssignEntity(_LocalPlayerEntity);
+
+            Console.WriteLine("Assigned LocalPlayerEntity");
+
             _FirstConnect = true;
+
             TimeSinceLastTick.Start();
+
+            Console.WriteLine("Started Tick Stopwatch");
         }
 
         RiptideClient.Update();
 
-        Interpolation.Interpolate(PlayerPool);
+        //Interpolation.Interpolate(PlayerPool);
 
+        Console.WriteLine("Stopping Processing Scopes");
         StopProcessingScopes();
+        Console.WriteLine("Stopped Processing Scopes");
     }
 
     private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)

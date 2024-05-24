@@ -349,6 +349,7 @@ public class TMPSClient
     {
         RiptideLogger.Initialize(Console.WriteLine, true);
         RiptideClient = new Client();
+        RiptideClient.TimeoutTime = Utils.DefaultTimeout;
 
         Startup();
     }

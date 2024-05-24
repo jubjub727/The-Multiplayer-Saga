@@ -15,6 +15,8 @@
 
         public const int Tickrate = 64;
 
+        public const int DefaultTimeout = 3000;
+
         public static bool IsBadFloat(float x)
         {
             return float.IsNaN(x) || float.IsInfinity(x);

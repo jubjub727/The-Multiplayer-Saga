@@ -189,6 +189,7 @@ namespace tmpsserver
 
             RiptideLogger.Initialize(Console.WriteLine, true);
             RiptideServer = new Server();
+            RiptideServer.TimeoutTime = Utils.DefaultTimeout;
 
             Thread tickThread = new Thread(MainLoop);
             tickThread.Start();

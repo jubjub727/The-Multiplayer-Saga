@@ -206,7 +206,7 @@ namespace dummy_client
                     timeSinceJump.Restart();
                 }
 
-                if (count > 240)
+                if (count > 240 && _FirstConnect)
                 {
                     Console.WriteLine("X - {0}, Y - {1}, Z - {2}", _LocalPlayer.Transform.X, _LocalPlayer.Transform.Y, _LocalPlayer.Transform.Z);
                     count = 0;

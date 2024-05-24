@@ -2,8 +2,6 @@
 {
     public class Transform
     {
-        //public bool SnapToGroundOn = true;
-
         // Vec3 Position
         public float X = 0f;
         public float Y = 0f;

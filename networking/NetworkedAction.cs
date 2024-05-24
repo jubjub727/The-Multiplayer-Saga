@@ -1,10 +1,5 @@
 ﻿using OMP.LSWTSS.CApi1;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using gameutil;
 
 namespace Networking
 {
@@ -42,17 +37,22 @@ namespace Networking
             {
                 CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
 
-                int* moveModePtr = (int*)((nint)characterMoverComponent + 0x110);
+                int* moveModePtr = (int*)((nint)characterMoverComponent + GameUtil.MoveModeOffset);
                 *moveModePtr = 2;
 
                 //bool snapToGroundOn = false;
 
                 //characterMoverComponent.set_SnapToGroundOn(ref snapToGroundOn);
                 characterMoverComponent.Jump(ref Amount);
+
+                CheckForFalling.Handle checkForFalling = (CheckForFalling.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CheckForFalling", false);
+
+                checkForFalling.SetCheckFalling(false);
+
+                //Player.JustJumped = true;
                 //characterMoverComponent.set_SnapToGroundOn(ref Player.Transform.SnapToGroundOn);
                 //*moveModePtr = 0;
             }
-
         }
 
         public void ProcessAction()

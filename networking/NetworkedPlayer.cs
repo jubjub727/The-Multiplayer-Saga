@@ -12,6 +12,9 @@ namespace Networking
         //[NotNetworked]
         //private int Count = 0;
 
+        //public bool JustJumped = false;
+
+        //public bool SnapToGroundOn = false;
         public UInt16 PlayerId;
         public Transform Transform;
         public string Name = "";
@@ -127,14 +130,9 @@ namespace Networking
             }
 
             /*CharacterMoverComponent.Handle characterMover = (CharacterMoverComponent.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
-            if (horizontalMover == nint.Zero)
+            if (characterMover == nint.Zero)
             {
                 throw new Exception("Couldn't find CharacterMoverComponent for entity");
-            }
-
-            if (characterMover.OnGround())
-            {
-                characterMover.set_SnapToGroundOn(ref transform.SnapToGroundOn);
             }*/
 
             unsafe

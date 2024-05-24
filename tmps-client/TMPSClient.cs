@@ -21,6 +21,8 @@ public class TMPSClient
 
     CFuncHook1<JumpContext.OnEnterMethod.Delegate>? JumpHook;
 
+    CFuncHook1<DoubleJumpContext.OnEnterMethod.Delegate?>? DoubleJumpHook;
+
     ServerInfo ServerInfo = new ServerInfo(@"ServerInfo.cfg");
 
     private Client RiptideClient;
@@ -71,23 +73,25 @@ public class TMPSClient
             JumpContext.OnEnterMethod.Ptr,
             (handle, param0) =>
             {
-                /*unsafe
-                {
-                    CharacterJumpData.Handle* characterJumpDataPtr = (CharacterJumpData.Handle*)(nint)handle.get_JumpData();
-
-                    CharacterJumpData.Handle characterJumpData = *characterJumpDataPtr;
-
-                    Console.WriteLine(characterJumpData.get_JumpHeight());
-                    Console.WriteLine(characterJumpData.get_JumpSpeed());
-                }*/
-
-
                 JumpEvent(0.56406253576278687f);
+
                 JumpHook!.Trampoline!(handle, param0);
             }
         );
 
+        DoubleJumpHook = new(
+            DoubleJumpContext.OnEnterMethod.Ptr,
+            (handle, param0) =>
+            {
+                JumpEvent(0.40000000596046448f);
+
+                DoubleJumpHook!.Trampoline!(handle, param0);
+            }
+        );
+
         JumpHook.Enable();
+
+        DoubleJumpHook.Enable();
 
         GameFrameworkUpdateMethodHook.Enable();
     }

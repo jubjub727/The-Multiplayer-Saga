@@ -31,6 +31,8 @@ namespace gameutil
 
         public static uint nttUniverseProcessingScopeDestructorOffset = 0x2E4B500;
 
+        public static uint MoveModeOffset = 0x110;
+
         // |STRING CONSTANTS|
         public const string UniverseName = "MainUniverse";
 

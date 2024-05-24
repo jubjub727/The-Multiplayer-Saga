@@ -56,8 +56,6 @@ public class TMPSClient
         RiptideClient.MessageReceived += MessageHandler;
         RiptideClient.ClientConnected += PlayerConnected;
         RiptideClient.ClientDisconnected += PlayerDisconnected;
-
-        RiptideClient.TimeoutTime = Utils.DefaultTimeout;
     }
 
     private void SetupHooks()
@@ -170,6 +168,8 @@ public class TMPSClient
         {
             RiptideClient.Connect(ServerInfo.ConnectionString, useMessageHandlers: false);
 
+            RiptideClient.TimeoutTime = Utils.DefaultTimeout;
+
             _RiptideConnected = true;
         }
 
@@ -195,6 +195,10 @@ public class TMPSClient
         Interpolation.Interpolate(PlayerPool);
 
         GameUtil.StopProcessingScopes();
+
+        var cursorPos = Console.GetCursorPosition();
+        Console.Write("Ping: {0}", RiptideClient.RTT);
+        Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
     }
 
     private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)

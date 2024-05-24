@@ -51,10 +51,23 @@ namespace tmpsserver
 
             while (true)
             {
-                var cursorPos = Console.GetCursorPosition();
                 timeElapsed.Start();
 
                 RunTick();
+
+                var cursorPos = Console.GetCursorPosition();
+                Console.Write("| ");
+
+                foreach (Connection connection in RiptideServer.Clients)
+                {
+                    NetworkedPlayer player = FindPlayer(connection.Id);
+                    if (player != null)
+                    {
+                        Console.Write("{0} - {1} | ", player.Name, connection.RTT);
+                    }
+                }
+
+                Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
 
                 while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 15625)) // 15625 = 64 tick
                 {
@@ -63,6 +76,19 @@ namespace tmpsserver
                 timeElapsed.Stop();
                 timeElapsed.Reset();
             }
+        }
+
+        private NetworkedPlayer? FindPlayer(int playerId)
+        {
+            foreach (NetworkedPlayer networkedPlayer in PlayerPool)
+            {
+                if (networkedPlayer.PlayerId == playerId)
+                {
+                    return networkedPlayer;
+                }
+            }
+
+            return null;
         }
 
         private void RunTick()

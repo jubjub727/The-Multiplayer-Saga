@@ -37,9 +37,8 @@ namespace Networking
 
         private void Jump()
         {
-            float amount = Amount;
             CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
-            characterMoverComponent.Jump(ref amount);
+            characterMoverComponent.Jump(ref Amount);
         }
 
         public void ProcessAction()

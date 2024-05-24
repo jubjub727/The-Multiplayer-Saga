@@ -126,8 +126,6 @@ public class TMPSClient
         {
             throw new Exception("Couldn't find CharacterMoverComponent for LocalPlayer");
         }
-
-        _LocalPlayer.Transform.SnapToGroundOn = characterMoverComponent.get_SnapToGroundOn();
     }
 
     private bool CheckIfReady()

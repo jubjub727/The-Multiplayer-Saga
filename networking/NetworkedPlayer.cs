@@ -132,8 +132,6 @@ namespace Networking
                 throw new Exception("Couldn't find CharacterMoverComponent for entity");
             }
 
-            characterMoverComponent.set_SnapToGroundOn(ref Transform.SnapToGroundOn);
-
             unsafe
             {
                 NuVec* distancePtr = &distance;

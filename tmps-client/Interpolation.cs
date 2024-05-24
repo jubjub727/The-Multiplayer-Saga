@@ -1,4 +1,5 @@
 ﻿using Networking;
+using Riptide.Utils;
 using System.Diagnostics;
 
 namespace tmpsclient;
@@ -90,6 +91,7 @@ public class Interpolation
 
             if (transform.IsBadTransform())
             {
+                RiptideLogger.Log(LogType.Error, String.Format("Calculated bad Transform for {0}({1})", player.Name, player.PlayerId));
                 continue;
             }
 

@@ -211,6 +211,10 @@ public class TMPSClient
                 {
                     PlayerPool[i].SetTransform(networkedPlayer.Transform, TimeSinceLastTick.ElapsedTicks);
                 }
+                else
+                {
+                    RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Received bad Transform for {0}({1})", networkedPlayer.Name, networkedPlayer.PlayerId));
+                }
                 return;
             }
         }

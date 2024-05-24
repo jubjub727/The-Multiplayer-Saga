@@ -30,6 +30,8 @@ namespace tmpsserver
 
             RiptideLogger.Log(LogType.Info, "TMPS", "Finished Loading Types");
 
+            RiptideServer.TimeoutTime = Utils.DefaultTimeout;
+
             RiptideServer.Start(Port, MaxPlayers, 0, false);
         }
 
@@ -189,7 +191,6 @@ namespace tmpsserver
 
             RiptideLogger.Initialize(Console.WriteLine, true);
             RiptideServer = new Server();
-            RiptideServer.TimeoutTime = Utils.DefaultTimeout;
 
             Thread tickThread = new Thread(MainLoop);
             tickThread.Start();

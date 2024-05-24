@@ -56,6 +56,8 @@ public class TMPSClient
         RiptideClient.MessageReceived += MessageHandler;
         RiptideClient.ClientConnected += PlayerConnected;
         RiptideClient.ClientDisconnected += PlayerDisconnected;
+
+        RiptideClient.TimeoutTime = Utils.DefaultTimeout;
     }
 
     private void SetupHooks()
@@ -349,7 +351,6 @@ public class TMPSClient
     {
         RiptideLogger.Initialize(Console.WriteLine, true);
         RiptideClient = new Client();
-        RiptideClient.TimeoutTime = Utils.DefaultTimeout;
 
         Startup();
     }

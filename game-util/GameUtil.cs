@@ -41,6 +41,15 @@ namespace gameutil
 
         public static ApiWorldProcessingScope.Handle apiWorldProcessingScopeHandle;
 
+        // |STRUCTS|
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NuVec
+        {
+            public float X;
+            public float Y;
+            public float Z;
+        }
+
         // Gets the current ApiWorld
         public static ApiWorld.Handle GetCurrentApiWorldHandle()
         {

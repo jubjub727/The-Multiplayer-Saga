@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using gameutil;
@@ -13,6 +14,18 @@ namespace dummy_client
 {
     public class DummyClient
     {
+        [DllImport("user32.dll")]
+        static extern short GetAsyncKeyState(int vKey);
+
+        private const float HorizontalSpeed = 0.01f;
+
+        private const int W = 0x57;
+        private const int A = 0x41;
+        private const int S = 0x53;
+        private const int D = 0x44;
+
+        private const int PAGE_DOWN = 0x22;
+
         private Client RiptideClient;
 
         private List<NetworkedPlayer> PlayerPool = new List<NetworkedPlayer>();
@@ -50,7 +63,7 @@ namespace dummy_client
 
             if (RiptideClient.IsConnected && _FirstConnect == false)
             {
-                NetworkedPlayer localPlayerNetworked = new NetworkedPlayer(RiptideClient.Id, _ConnectionString);
+                NetworkedPlayer localPlayerNetworked = new NetworkedPlayer(RiptideClient.Id, Utils.DummyClientName);
                 localPlayerNetworked.IsLocal = true;
 
                 _LocalPlayer = localPlayerNetworked;
@@ -67,6 +80,7 @@ namespace dummy_client
                 if (PlayerPool[i].PlayerId == networkedPlayer.PlayerId)
                 {
                     PlayerPool[i].Transform = networkedPlayer.Transform;
+                    return;
                 }
             }
 
@@ -137,22 +151,77 @@ namespace dummy_client
             RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Couldn't find leaving Player with ID - {0}", playerDisconnectedEvent.Id));
         }
 
+        private void JumpEvent(float amount)
+        {
+            if (_FirstConnect)
+            {
+                NetworkedAction jumpAction = new NetworkedAction(_LocalPlayer.PlayerId, Utils.JUMP_ACTION_ID, amount);
+
+                DataSegment[] dataSegments = new DataSegment[1];
+                dataSegments[0] = new DataSegment(jumpAction);
+
+                NetworkMessage actionMessage = new NetworkMessage(dataSegments);
+
+                Message message = Message.Create(MessageSendMode.Unreliable, Utils.CLIENT_ACTION_MESSAGE_ID);
+                message.AddBytes(actionMessage.Serialize());
+
+                RiptideClient.Send(message);
+            }
+        }
+
         private void MainLoop()
         {
+            int count = 0;
             Stopwatch timeElapsed = new Stopwatch();
+            Stopwatch timeSinceJump = new Stopwatch();
+            timeSinceJump.Start();
 
             while (true)
             {
                 timeElapsed.Start();
 
+                if (GetAsyncKeyState(A) != 0)
+                {
+                    _LocalPlayer.Transform.X = _LocalPlayer.Transform.X + HorizontalSpeed;
+                }
+
+                if (GetAsyncKeyState(D) != 0)
+                {
+                    _LocalPlayer.Transform.X = _LocalPlayer.Transform.X - HorizontalSpeed;
+                }
+
+                if (GetAsyncKeyState(S) != 0)
+                {
+                    _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z + HorizontalSpeed;
+                }
+
+                if (GetAsyncKeyState(W) != 0)
+                {
+                    _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z - HorizontalSpeed;
+                }
+
+                if (GetAsyncKeyState(PAGE_DOWN) != 0 && timeSinceJump.ElapsedMilliseconds > 250)
+                {
+                    JumpEvent(0.56406253576278687f);
+                    timeSinceJump.Restart();
+                }
+
+                if (count > 240)
+                {
+                    Console.WriteLine("X - {0}, Y - {1}, Z - {2}", _LocalPlayer.Transform.Z, _LocalPlayer.Transform.Y, _LocalPlayer.Transform.Z);
+                    count = 0;
+                }
+
                 OnUpdate();
 
-                while (timeElapsed.ElapsedTicks < (78125)) // 78125 = 128 tick
+                while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 4166))
                 {
                     continue;
                 }
                 timeElapsed.Stop();
                 timeElapsed.Reset();
+
+                count++;
             }
         }
 

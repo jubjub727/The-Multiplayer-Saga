@@ -100,8 +100,11 @@ namespace tmpsserver
             throw new Exception("YOU SHALL NOT PASS!");
         }
 
-        private void HandleTickReply(NetworkMessage tickMessage)
+        private void HandleTickReply(Message message)
         {
+            Packet packet = new Packet(message.GetBytes());
+            NetworkMessage tickMessage = packet.Deserialize();
+
             foreach (DataSegment dataSegment in tickMessage.DataSegments)
             {
                 if (dataSegment.Data is NetworkedPlayer)
@@ -111,16 +114,44 @@ namespace tmpsserver
             }
         }
 
+        private void HandleAction(Message message)
+        {
+            Packet packet = new Packet(message.GetBytes());
+            NetworkMessage tickMessage = packet.Deserialize();
+
+            if (tickMessage.DataSegments != null)
+            {
+                foreach (DataSegment dataSegment in tickMessage.DataSegments)
+                {
+                    if (dataSegment.Data is NetworkedAction)
+                    {
+                        NetworkedAction networkedAction = dataSegment.Data;
+
+                        DataSegment[] dataSegments = new DataSegment[1];
+                        dataSegments[0] = new DataSegment(networkedAction);
+
+                        NetworkMessage actionMessage = new NetworkMessage(dataSegments);
+
+                        Message newMessage = Message.Create(MessageSendMode.Unreliable, Utils.SERVER_ACTION_MESSAGE_ID);
+                        newMessage.AddBytes(actionMessage.Serialize());
+
+                        RiptideServer.SendToAll(newMessage);
+                    }
+                }
+            }
+        }
+
         private void MessageHandler(object sender, MessageReceivedEventArgs messageReceivedArgs)
         {
             Message message = messageReceivedArgs.Message;
 
-            Packet packet = new Packet(message.GetBytes());
-            NetworkMessage tickMessage = packet.Deserialize();
             switch(messageReceivedArgs.MessageId)
             {
                 case Utils.CLIENT_TICK_MESSAGE_ID:
-                    HandleTickReply(tickMessage);
+                    HandleTickReply(message);
+                    break;
+                case Utils.CLIENT_ACTION_MESSAGE_ID:
+                    HandleAction(message);
                     break;
                 default:
                     RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Received Uknown Message ID - {0}", messageReceivedArgs.MessageId));
@@ -141,11 +172,13 @@ namespace tmpsserver
             {
                 if (PlayerPool[i].PlayerId == playerDisconnectedEvent.Client.Id)
                 {
+                    string name = PlayerPool[i].Name;
                     PlayerPool.RemoveAt(i);
-                    RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Removed Player from PlayerPool with ID - {0}", playerDisconnectedEvent.Client.Id));
+                    RiptideLogger.Log(LogType.Info, "TMPS", String.Format("Removed {0}({1}) from PlayerPool", name, playerDisconnectedEvent.Client.Id));
                     return;
                 }
             }
+
             RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Couldn't find leaving Player with ID - {0}", playerDisconnectedEvent.Client.Id));
         }
 

@@ -1,5 +1,7 @@
 ﻿using OMP.LSWTSS.CApi1;
 using gameutil;
+using static gameutil.GameUtil;
+using static OMP.LSWTSS.CApi1.CommonEvents.Interaction.Data;
 
 namespace Networking
 {
@@ -7,6 +9,9 @@ namespace Networking
     [Networked(3)]
     public class NetworkedPlayer
     {
+        //[NotNetworked]
+        //private int Count = 0;
+
         public UInt16 PlayerId;
         public Transform Transform;
         public string Name = "";
@@ -39,9 +44,6 @@ namespace Networking
                 }
                 else
                 {
-                    if (_Entity == nint.Zero)
-                        throw new Exception("Tried to access NetworkedPlayer Entity but retrieved 0");
-
                     return _Entity;
                 }
             }
@@ -96,7 +98,50 @@ namespace Networking
                 throw new Exception("Tried to apply bad Transform on NetworkedPlayer");
             }
 
-            // Do stuff here to apply the transform
+            float X, Y, Z;
+            apiTransformComponent.Handle currentTransform = (apiTransformComponent.Handle)(nint)_Entity.FindComponentByTypeName("apiTransformComponent");
+            if (currentTransform == nint.Zero)
+            {
+                throw new Exception("Couldn't find Transform for entity");
+            }
+
+            currentTransform.GetPosition(out X, out Y, out Z);
+            currentTransform.SetRotation(transform.RX, transform.RY, transform.RZ);
+
+            NuVec distance = new NuVec();
+            distance.X = Math.Clamp((transform.X - X) * Utils.Tickrate, -5f, 5f);
+            distance.Y = Math.Clamp((transform.Y - Y) * Utils.Tickrate, -5f, 5f);
+            distance.Z = Math.Clamp((transform.Z - Z) * Utils.Tickrate, -5f, 5f);
+
+            /*if (Count > 64)
+            {
+                Console.WriteLine("{3} Distance:X - {0}, Y - {1}, Z - {2} | Current Position: X - {4}, Y - {5}, Z - {6} | Desired Position: X - {7}, Y - {8}, Z - {9}", distance.Z, distance.Y, distance.Z, Name, X, Y, Z, transform.X, transform.Y, transform.Z);
+
+                Count = 0;
+            }*/
+
+            HorizontalCharacterMover.Handle horizontalMover = (HorizontalCharacterMover.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("HorizontalCharacterMover", false);
+            if (horizontalMover == nint.Zero)
+            {
+                throw new Exception("Couldn't find HorizontalCharacterMover for entity");
+            }
+
+            CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("characterMoverComponent", false);
+            if (characterMoverComponent == nint.Zero)
+            {
+                throw new Exception("Couldn't find CharacterMoverComponent for entity");
+            }
+
+            characterMoverComponent.set_SnapToGroundOn(ref Transform.SnapToGroundOn);
+
+            unsafe
+            {
+                NuVec* distancePtr = &distance;
+
+                horizontalMover.SetMoveLaneVelocity((NuVec3.Handle)(nint)distancePtr);
+            }
+
+            //Count++;
         }
     }
 }

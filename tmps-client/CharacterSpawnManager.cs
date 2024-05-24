@@ -62,7 +62,13 @@ public static class CharacterSpawnManager
                 createdEntityTransform.SetPosition(task.Player.Transform.X, task.Player.Transform.Y, task.Player.Transform.Z);
                 createdEntityTransform.SetRotation(task.Player.Transform.RX, task.Player.Transform.RY, task.Player.Transform.RZ);
 
+                OpponentInfo.Handle characterOpponentInfo = (OpponentInfo.Handle)(nint)createdEntity.FindComponentByTypeNameRecursive("OpponentInfo", false);
+
+                characterOpponentInfo.SetAssistingParty(true);
+
                 task.Player.Entity = createdEntity;
+
+                task.State = CharacterSpawnState.CharacterSpawned;
             }
         }
         else
@@ -78,6 +84,7 @@ public static class CharacterSpawnManager
             if (task.Identifier == CharacterTasks[i].Identifier)
             {
                 CharacterTasks.RemoveAt(i);
+                return;
             }
         }
 
@@ -86,7 +93,7 @@ public static class CharacterSpawnManager
 
     public static void ConsumeTasks()
     {
-        foreach (SpawnCharacterTask task in CharacterTasks)
+        foreach (SpawnCharacterTask task in CharacterTasks.ToList())
         {
             switch (task.State)
             {

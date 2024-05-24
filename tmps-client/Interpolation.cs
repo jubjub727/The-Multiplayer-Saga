@@ -35,6 +35,10 @@ public class Interpolation
                 continue;
             }
 
+            if (player.Entity == nint.Zero) {
+                continue;
+            }
+
             long globalElapsedTime = 0;
             long elapsedTime = 0;
 

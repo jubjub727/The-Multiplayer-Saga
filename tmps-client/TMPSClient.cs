@@ -201,7 +201,10 @@ public class TMPSClient
         {
             if (PlayerPool[i].PlayerId == networkedPlayer.PlayerId)
             {
-                PlayerPool[i].SetTransform(networkedPlayer.Transform, TimeSinceLastTick.ElapsedTicks);
+                if (!networkedPlayer.Transform.IsBadTransform())
+                {
+                    PlayerPool[i].SetTransform(networkedPlayer.Transform, TimeSinceLastTick.ElapsedTicks);
+                }
                 return;
             }
         }

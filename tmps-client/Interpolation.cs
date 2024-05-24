@@ -4,8 +4,8 @@ using System.Diagnostics;
 namespace tmpsclient;
 public class Interpolation
 {
-    private const int PacketDepth = 5;
-    private const int PacketOffset = 2;
+    private const int PacketDepth = 32;
+    private const int PacketOffset = 5;
 
     double[] pointsArrayX = new double[PacketDepth];
     double[] pointsArrayY = new double[PacketDepth];
@@ -87,6 +87,11 @@ public class Interpolation
             transform.RX = (float)methodRX.Interpolate(elapsedTime);
             transform.RY = (float)methodRY.Interpolate(elapsedTime);
             transform.RZ = (float)methodRZ.Interpolate(elapsedTime);
+
+            if (transform.IsBadTransform())
+            {
+                continue;
+            }
 
             player.ApplyTransform(transform);
         }

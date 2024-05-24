@@ -9,6 +9,8 @@ namespace Networking
     [Networked(3)]
     public class NetworkedPlayer
     {
+        [NotNetworked]
+        private const int PacketDepth = 16;
         //[NotNetworked]
         //private int Count = 0;
 
@@ -71,7 +73,7 @@ namespace Networking
             PreviousTransform previousTransform = new PreviousTransform(transform, elapsedTime);
             PreviousTransforms.Add(previousTransform);
 
-            if (PreviousTransforms.Count > 5)
+            if (PreviousTransforms.Count > PacketDepth)
             {
                 PreviousTransforms.RemoveAt(0);
             }
@@ -137,6 +139,8 @@ namespace Networking
 
             unsafe
             {
+                Console.WriteLine("X - {0}, Y - {1}, Z - {2}", distance.X, distance.Y, distance.Z);
+
                 NuVec* distancePtr = &distance;
 
                 horizontalMover.SetMoveLaneVelocity((NuVec3.Handle)(nint)distancePtr);

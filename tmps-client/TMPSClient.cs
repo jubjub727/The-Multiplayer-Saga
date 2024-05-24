@@ -6,7 +6,6 @@ using Riptide.Utils;
 using tmpsclient;
 using System.Runtime.InteropServices;
 using gameutil;
-using MathNet.Numerics.Statistics.Mcmc;
 
 namespace OMP.LSWTSS;
 
@@ -21,7 +20,7 @@ public class TMPSClient
 
     CFuncHook1<JumpContext.OnEnterMethod.Delegate>? JumpHook;
 
-    CFuncHook1<DoubleJumpContext.OnEnterMethod.Delegate?>? DoubleJumpHook;
+    CFuncHook1<DoubleJumpContext.OnEnterMethod.Delegate>? DoubleJumpHook;
 
     ServerInfo ServerInfo = new ServerInfo(@"ServerInfo.cfg");
 
@@ -192,13 +191,13 @@ public class TMPSClient
 
         RiptideClient.Update();
 
+        var cursorPos = Console.GetCursorPosition();
+        Console.Write("Ping: {0}                    ", RiptideClient.RTT);
+        Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
+
         Interpolation.Interpolate(PlayerPool);
 
         GameUtil.StopProcessingScopes();
-
-        var cursorPos = Console.GetCursorPosition();
-        Console.Write("Ping: {0}", RiptideClient.RTT);
-        Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
     }
 
     private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)

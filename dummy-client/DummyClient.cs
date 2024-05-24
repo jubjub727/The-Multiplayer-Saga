@@ -142,9 +142,8 @@ namespace dummy_client
             {
                 if (PlayerPool[i].PlayerId == playerDisconnectedEvent.Id)
                 {
-                    string playerName = PlayerPool[i].Name;
+                    RiptideLogger.Log(LogType.Info, "TMPS", String.Format("{0} left the game", PlayerPool[i].Name));
                     PlayerPool.RemoveAt(i);
-                    RiptideLogger.Log(LogType.Info, "TMPS", String.Format("{0} left the game", playerName));
                     return;
                 }
             }

@@ -1,4 +1,5 @@
-﻿using Networking;
+﻿using MathNet.Numerics;
+using Networking;
 using Riptide.Utils;
 using System.Diagnostics;
 
@@ -33,10 +34,11 @@ public class Interpolation
         foreach (NetworkedPlayer player in PlayerPool)
         {
             if (player.PreviousTransforms.Count < PacketDepth) {
+                //Console.WriteLine("Only Have ({0}/{1}) Transforms", player.PreviousTransforms.Count, PacketDepth);
                 continue;
             }
-
             if (player.Entity == nint.Zero) {
+                //Console.WriteLine("No Entity for {0}({1})", player.Name, player.PlayerId);
                 continue;
             }
 

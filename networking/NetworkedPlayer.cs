@@ -126,11 +126,16 @@ namespace Networking
                 throw new Exception("Couldn't find HorizontalCharacterMover for entity");
             }
 
-            CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("characterMoverComponent", false);
-            if (characterMoverComponent == nint.Zero)
+            /*CharacterMoverComponent.Handle characterMover = (CharacterMoverComponent.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
+            if (horizontalMover == nint.Zero)
             {
                 throw new Exception("Couldn't find CharacterMoverComponent for entity");
             }
+
+            if (characterMover.OnGround())
+            {
+                characterMover.set_SnapToGroundOn(ref transform.SnapToGroundOn);
+            }*/
 
             unsafe
             {

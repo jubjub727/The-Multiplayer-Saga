@@ -126,6 +126,8 @@ public class TMPSClient
         {
             throw new Exception("Couldn't find CharacterMoverComponent for LocalPlayer");
         }
+
+        //_LocalPlayer.Transform.SnapToGroundOn = characterMoverComponent.get_SnapToGroundOn();
     }
 
     private bool CheckIfReady()
@@ -182,11 +184,11 @@ public class TMPSClient
             TimeSinceLastTick.Start();
         }
 
-        GameUtil.StopProcessingScopes();
-
         RiptideClient.Update();
 
         Interpolation.Interpolate(PlayerPool);
+
+        GameUtil.StopProcessingScopes();
     }
 
     private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)

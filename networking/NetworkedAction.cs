@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,8 +38,21 @@ namespace Networking
 
         private void Jump()
         {
-            CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
-            characterMoverComponent.Jump(ref Amount);
+            unsafe
+            {
+                CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
+
+                int* moveModePtr = (int*)((nint)characterMoverComponent + 0x110);
+                *moveModePtr = 2;
+
+                //bool snapToGroundOn = false;
+
+                //characterMoverComponent.set_SnapToGroundOn(ref snapToGroundOn);
+                characterMoverComponent.Jump(ref Amount);
+                //characterMoverComponent.set_SnapToGroundOn(ref Player.Transform.SnapToGroundOn);
+                //*moveModePtr = 0;
+            }
+
         }
 
         public void ProcessAction()

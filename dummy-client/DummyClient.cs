@@ -200,9 +200,9 @@ namespace dummy_client
                     _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z - HorizontalSpeed;
                 }
 
-                if (GetAsyncKeyState(PAGE_DOWN) != 0 && timeSinceJump.ElapsedMilliseconds > 250)
+                if (timeSinceJump.ElapsedMilliseconds > 500 && GetAsyncKeyState(PAGE_DOWN) != 0)
                 {
-                    JumpEvent(0.56406253576278687f * 2.375f);
+                    JumpEvent(0.56406253576278687f);
                     timeSinceJump.Restart();
                 }
 

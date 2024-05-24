@@ -4,7 +4,7 @@
     {
         public UInt32 Size = 0;
         public Int32 NumberOfDataSegments;
-        public DataSegment[]? DataSegments;
+        public DataSegment[] DataSegments = new DataSegment[0];
 
         public NetworkMessage(DataSegment[] dataSegments)
         {

@@ -5,6 +5,7 @@ using Riptide;
 using Riptide.Utils;
 using tmpsclient;
 using System.Runtime.InteropServices;
+using gameutil;
 
 namespace OMP.LSWTSS;
 
@@ -25,7 +26,7 @@ public class TMPSClient
 
     private List<NetworkedPlayer> PlayerPool = new List<NetworkedPlayer>();
 
-    private NetworkedPlayer LocalPlayer;
+    private NetworkedPlayer _LocalPlayer;
 
     private Stopwatch TimeSinceLastTick = new Stopwatch();
 
@@ -66,30 +67,12 @@ public class TMPSClient
         GameFrameworkUpdateMethodHook.Enable();
     }
 
-    private void StartProcessingScopes()
+    private void CopyTransformToNetworkedPlayer()
     {
-        GameUtil.nttUniverseProcessingScopeHandle = (nttUniverseProcessingScope.Handle)Marshal.AllocHGlobal(0x20);
+        apiTransformComponent.Handle transformComponent = (apiTransformComponent.Handle)(nint)_LocalPlayer.Entity.FindComponentByTypeName("apiTransformComponent");
 
-        GameUtil.nttUniverseProcessingScopeConstructorDelegate nttUniverseProcessingScopeConstructor = NativeFunc.GetExecute<GameUtil.nttUniverseProcessingScopeConstructorDelegate>(NativeFunc.GetPtr(GameUtil.nttUniverseProcessingScopeConstructorOffset));
-
-        nttUniverseProcessingScopeConstructor(GameUtil.nttUniverseProcessingScopeHandle, GameUtil.GetCurrentApiWorldHandle().GetUniverse(), true);
-
-        GameUtil.apiWorldProcessingScopeHandle = (ApiWorldProcessingScope.Handle)Marshal.AllocHGlobal(0x20);
-
-        GameUtil.ApiWorldProcessingScopeConstructorDelegate apiWorldProcessingScopeConstructor = NativeFunc.GetExecute<GameUtil.ApiWorldProcessingScopeConstructorDelegate>(NativeFunc.GetPtr(GameUtil.ApiWorldProcessingScopeConstructorOffset));
-
-        apiWorldProcessingScopeConstructor(GameUtil.apiWorldProcessingScopeHandle, GameUtil.GetCurrentApiWorldHandle(), true);
-    }
-
-    private void StopProcessingScopes()
-    {
-        GameUtil.ApiWorldProcessingScopeDestructorDelegate apiWorldProcessingScopeDestructor = NativeFunc.GetExecute<GameUtil.ApiWorldProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.apiWorldProcessingScopeDestructorOffset));
-
-        apiWorldProcessingScopeDestructor(GameUtil.apiWorldProcessingScopeHandle);
-
-        GameUtil.nttUniverseProcessingScopeDestructorDelegate nttUniverseProcessingScopeDestructor = NativeFunc.GetExecute<GameUtil.nttUniverseProcessingScopeDestructorDelegate>(NativeFunc.GetPtr(GameUtil.nttUniverseProcessingScopeDestructorOffset));
-
-        nttUniverseProcessingScopeDestructor(GameUtil.nttUniverseProcessingScopeHandle);
+        transformComponent.GetPosition(out _LocalPlayer.Transform.X, out _LocalPlayer.Transform.Y, out _LocalPlayer.Transform.Z);
+        transformComponent.GetRotation(out _LocalPlayer.Transform.RX, out _LocalPlayer.Transform.RY, out _LocalPlayer.Transform.RZ);
     }
 
     private bool CheckIfReady()
@@ -103,65 +86,54 @@ public class TMPSClient
         return _ReadyToConnect;
     }
 
+    private bool PlayerEntityReady()
+    {
+        try
+        {
+            apiEntity.Handle entity = _LocalPlayer.Entity;
+            return entity != nint.Zero;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public void OnUpdate()
     {
         if (CheckIfReady() == false) return;
 
-        StartProcessingScopes();
+        GameUtil.StartProcessingScopes();
 
-        if (!_RiptideConnected && GameUtil.LoadedResource()) // GameUtil.LoadedResource() actually loads the resource here but once _RiptideConnected is true the function no longer gets called
+        if (!_RiptideConnected)
         {
             RiptideClient.Connect(ServerInfo.ConnectionString, useMessageHandlers: false);
 
             _RiptideConnected = true;
         }
 
-        if (_FirstConnect == true && LocalPlayer.Entity != nint.Zero)
+        if (_FirstConnect == true && PlayerEntityReady())
         {
-            /*Console.WriteLine("Stopping Processing Scopes");
-            StopProcessingScopes();
-            Console.WriteLine("Getting Local Transform");
-            apiTransformComponent.Handle transformComponent = (apiTransformComponent.Handle)(nint)LocalPlayer.Entity.FindComponentByTypeName("apiTransformComponent");
-            Console.WriteLine("Got Local Transform");
-            transformComponent.GetPosition(out LocalPlayer.Transform.X, out LocalPlayer.Transform.Y, out LocalPlayer.Transform.Z);
-            Console.WriteLine("Got Position");
-            transformComponent.GetRotation(out LocalPlayer.Transform.RX, out LocalPlayer.Transform.RY, out LocalPlayer.Transform.RZ);
-            Console.WriteLine("Got Rotation");
-            StartProcessingScopes();
-            Console.WriteLine("Starting Processing Scopes");*/
+            CharacterSpawnManager.ConsumeTasks();
+
+            CopyTransformToNetworkedPlayer();
         }
 
         if (RiptideClient.IsConnected && _FirstConnect == false)
         {
-            LocalPlayer = new NetworkedPlayer(RiptideClient.Id, ServerInfo.Name);
-
-            Console.WriteLine("Created LocalPlayer");
-
-            PlayerControlSystem.Handle _PlayerControlSystemHandle = PlayerControlSystem.GetFromGlobalFunc.Execute(GameUtil.GetCurrentApiWorldHandle().GetUniverse());
-
-            Console.WriteLine("Retrieved PlayerControlSystem");
-
-            apiEntity.Handle _LocalPlayerEntity = _PlayerControlSystemHandle.GetPlayerEntityForPlayerIdx(0);
-            Console.WriteLine("Retrieved LocalPlayerEntity - {0}", (nint)_LocalPlayerEntity);
-
-            LocalPlayer.AssignEntity(_LocalPlayerEntity);
-
-            Console.WriteLine("Assigned LocalPlayerEntity");
+            _LocalPlayer = new NetworkedPlayer(RiptideClient.Id, ServerInfo.Name);
+            _LocalPlayer.IsLocal = true;
 
             _FirstConnect = true;
 
             TimeSinceLastTick.Start();
-
-            Console.WriteLine("Started Tick Stopwatch");
         }
+
+        GameUtil.StopProcessingScopes();
 
         RiptideClient.Update();
 
         //Interpolation.Interpolate(PlayerPool);
-
-        Console.WriteLine("Stopping Processing Scopes");
-        StopProcessingScopes();
-        Console.WriteLine("Stopped Processing Scopes");
     }
 
     private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)
@@ -174,12 +146,11 @@ public class TMPSClient
             }
         }
 
-        if (_FirstConnect && networkedPlayer.PlayerId != LocalPlayer.PlayerId)
+        if (_FirstConnect && networkedPlayer.PlayerId != _LocalPlayer.PlayerId)
         {
-            apiEntity.Handle createdEntity = GameUtil.CreateEntity(networkedPlayer.Transform);
-
-            networkedPlayer.AssignEntity(createdEntity);
             networkedPlayer.SetTransform(networkedPlayer.Transform, TimeSinceLastTick.ElapsedTicks);
+
+            CharacterSpawnManager.SpawnCharacter(networkedPlayer);
 
             PlayerPool.Add(networkedPlayer);
 
@@ -193,7 +164,7 @@ public class TMPSClient
         if (_FirstConnect)
         {
             DataSegment[] dataSegments = new DataSegment[1];
-            dataSegments[0] = new DataSegment(LocalPlayer);
+            dataSegments[0] = new DataSegment(_LocalPlayer);
 
             NetworkMessage tickMessage = new NetworkMessage(dataSegments);
 
@@ -210,15 +181,17 @@ public class TMPSClient
         {
             TimeSinceLastTick.Stop();
             Message message = messageReceivedArgs.Message;
-
             Packet packet = new Packet(message.GetBytes());
             NetworkMessage tickMessage = packet.Deserialize();
 
-            foreach (DataSegment dataSegment in tickMessage.DataSegments)
+            if (tickMessage.DataSegments != null)
             {
-                if (dataSegment.Data is NetworkedPlayer)
+                foreach (DataSegment dataSegment in tickMessage.DataSegments)
                 {
-                    ProcessNetworkedPlayer(dataSegment.Data);
+                    if (dataSegment.Data is NetworkedPlayer)
+                    {
+                        ProcessNetworkedPlayer(dataSegment.Data);
+                    }
                 }
             }
 

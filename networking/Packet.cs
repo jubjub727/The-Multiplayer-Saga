@@ -82,6 +82,24 @@ namespace Networking
             }
         }
 
+        public void WriteBool(bool boolVal)
+        {
+            Byte[] bytes = BitConverter.GetBytes(boolVal);
+            foreach (Byte value in bytes)
+            {
+                data[writeHead] = value;
+                writeHead++;
+            }
+        }
+
+        public bool ReadBool()
+        {
+            bool value = BitConverter.ToBoolean(data, readHead);
+            readHead += sizeof(bool);
+
+            return value;
+        }
+
         public string ReadString()
         {
             Int32 len = ReadInt32();
@@ -142,6 +160,12 @@ namespace Networking
         {
             tick.Size = ReadUInt32();
             tick.NumberOfDataSegments = ReadInt32();
+
+            if (tick.NumberOfDataSegments == 0)
+            {
+                return tick;
+            }
+
             tick.DataSegments = new DataSegment[tick.NumberOfDataSegments];
 
             for (int i = 0; i < tick.DataSegments.Length; i++)

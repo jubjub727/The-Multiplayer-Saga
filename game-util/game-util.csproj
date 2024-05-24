@@ -2,14 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>game_util</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>Networking</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\game-util\game-util.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="omp-lswtss-c-api1-core">
@@ -20,9 +16,6 @@
     </Reference>
     <Reference Include="omp-lswtss-c-api1-manager">
       <HintPath>H:\SteamLibrary\steamapps\common\LEGO Star Wars - The Skywalker Saga\mods\c-api1\omp-lswtss-c-api1-manager.dll</HintPath>
-    </Reference>
-    <Reference Include="system-runtime-interop-services-ext">
-      <HintPath>D:\lswtss-omp-export-latest\workspaces\dotnet\system-runtime-interop-services-ext\bin\Release\net8.0\system-runtime-interop-services-ext.dll</HintPath>
     </Reference>
   </ItemGroup>
 

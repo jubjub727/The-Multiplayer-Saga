@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tmps-client", "tmps-client\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SceneDumper", "SceneDumper\SceneDumper.csproj", "{AD8E492C-87A7-4EC4-A15C-D34B443C4D4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "node-dumper", "node-dumper\node-dumper.csproj", "{26630C22-D689-4790-95F8-E86BBF8855D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "node-dumper", "node-dumper\node-dumper.csproj", "{26630C22-D689-4790-95F8-E86BBF8855D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "game-util", "game-util\game-util.csproj", "{5AAEAF49-ED09-4367-8523-B5C48E39B38A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{26630C22-D689-4790-95F8-E86BBF8855D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26630C22-D689-4790-95F8-E86BBF8855D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26630C22-D689-4790-95F8-E86BBF8855D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AAEAF49-ED09-4367-8523-B5C48E39B38A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AAEAF49-ED09-4367-8523-B5C48E39B38A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AAEAF49-ED09-4367-8523-B5C48E39B38A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AAEAF49-ED09-4367-8523-B5C48E39B38A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

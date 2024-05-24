@@ -92,10 +92,12 @@ namespace tmpsserver
                 if (PlayerPool[i].PlayerId == networkedPlayer.PlayerId)
                 {
                     PlayerPool[i] = networkedPlayer;
+                    return;
                 }
             }
 
             RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Could not process NetworkedPlayer for {0}({1})", networkedPlayer.Name, networkedPlayer.PlayerId));
+            throw new Exception("YOU SHALL NOT PASS!");
         }
 
         private void HandleTickReply(NetworkMessage tickMessage)

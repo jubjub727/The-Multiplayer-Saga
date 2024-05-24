@@ -1,4 +1,6 @@
-﻿namespace tmpsclient
+﻿using Networking;
+
+namespace tmpsclient
 {
     public class ServerInfo
     {
@@ -15,10 +17,13 @@
             else if (serverInfo.Length == 1)
             {
                 ConnectionString = serverInfo[0];
-                Name = "";
+                Name = Utils.DefaultName;
             }
-            ConnectionString = serverInfo[0];
-            Name = serverInfo[1];
+            else
+            {
+                ConnectionString = serverInfo[0];
+                Name = serverInfo[1];
+            }
         }
     }
 }

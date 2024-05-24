@@ -69,6 +69,8 @@ namespace Networking
                     return packet.ReadUInt16();
                 case TypeCode.String:
                     return packet.ReadString();
+                case TypeCode.Boolean:
+                    return packet.ReadBool();
                 case TypeCode.Object:
                     var value = Activator.CreateInstance(field.FieldType);
                     IterateFieldsAndRead(packet, value);
@@ -129,6 +131,14 @@ namespace Networking
                         throw new Exception("Received Null Value for Field (" + field.Name + ")");
                     }
                     packet.WriteString(stringValue);
+                    return;
+                case TypeCode.Boolean:
+                    bool? boolValue = (bool?)field.GetValue(data);
+                    if (boolValue == null)
+                    {
+                        throw new Exception("Received Null Value for Field (" + field.Name + ")");
+                    }
+                    packet.WriteBool(boolValue.Value);
                     return;
                 case TypeCode.Object:
                     var value = (object?)field.GetValue(data);

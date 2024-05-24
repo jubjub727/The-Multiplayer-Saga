@@ -1,4 +1,5 @@
 ﻿using OMP.LSWTSS.CApi1;
+using gameutil;
 
 namespace Networking
 {
@@ -9,12 +10,51 @@ namespace Networking
         public UInt16 PlayerId;
         public Transform Transform;
         public string Name = "";
+        public string PrefabPath = "Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked";
 
         [NotNetworked]
-        public apiEntity.Handle Entity = (apiEntity.Handle)nint.Zero;
+        public bool IsLocal = false;
 
         [NotNetworked]
         public List<PreviousTransform> PreviousTransforms = new List<PreviousTransform>();
+
+        [NotNetworked]
+        private apiEntity.Handle _Entity = (apiEntity.Handle)nint.Zero;
+
+        [NotNetworked]
+        public apiEntity.Handle Entity
+        {
+            get
+            {
+                if (IsLocal)
+                {
+                    PlayerControlSystem.Handle playerControlSystemHandle = PlayerControlSystem.GetFromGlobalFunc.Execute(GameUtil.GetCurrentApiWorldHandle().GetUniverse());
+
+                    apiEntity.Handle localPlayerEntity = playerControlSystemHandle.GetPlayerEntityForPlayerIdx(0);
+
+                    if (localPlayerEntity == nint.Zero)
+                        throw new Exception("Tried to access LocalPlayer Entity but retrieved 0");
+
+                    return localPlayerEntity;
+                }
+                else
+                {
+                    if (_Entity == nint.Zero)
+                        throw new Exception("Tried to access NetworkedPlayer Entity but retrieved 0");
+
+                    return _Entity;
+                }
+            }
+            set
+            {
+                if (IsLocal)
+                    throw new Exception("Tried to set Entity on LocalPlayer");
+                else
+                {
+                    _Entity = value;
+                }
+            }
+        }
 
         public void SetTransform(Transform transform, long elapsedTime)
         {
@@ -32,11 +72,6 @@ namespace Networking
             }
         }
 
-        public void AssignEntity(apiEntity.Handle entity)
-        {
-            Entity = entity;
-        }
-
         public NetworkedPlayer(UInt16 playerId, string name)
         {
             PlayerId = playerId;
@@ -47,6 +82,11 @@ namespace Networking
         public NetworkedPlayer(UInt16 playerId)
         {
             PlayerId = playerId;
+            Transform = new Transform();
+        }
+
+        public NetworkedPlayer()
+        {
             Transform = new Transform();
         }
         public void ApplyTransform(Transform transform)

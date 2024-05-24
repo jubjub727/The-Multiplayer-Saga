@@ -1,2 +1,3 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using dummy_client;
+
+DummyClient client = new DummyClient("127.0.0.1:11010");

@@ -12,4 +12,10 @@
     <ProjectReference Include="..\networking\networking.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="RiptideNetworking">
+      <HintPath>D:\lswtss-omp-export\workspaces\dotnet\riptide-networking\RiptideNetworking\bin\Release\netstandard2.0\RiptideNetworking.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

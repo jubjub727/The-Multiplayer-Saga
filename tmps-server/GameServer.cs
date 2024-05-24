@@ -67,6 +67,8 @@ namespace tmpsserver
                     }
                 }
 
+                Console.Write("Execution Time: {0}ms", timeElapsed.ElapsedMilliseconds);
+
                 Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
 
                 while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 15625)) // 15625 = 64 tick

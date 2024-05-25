@@ -35,6 +35,11 @@ namespace Networking
         {
             unsafe
             {
+                if (Player.Entity == nint.Zero)
+                {
+                    return;
+                }
+
                 CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
 
                 int* moveModePtr = (int*)((nint)characterMoverComponent + GameUtil.MoveModeOffset);

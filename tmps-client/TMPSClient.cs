@@ -24,6 +24,8 @@ public class TMPSClient
 
     ServerInfo ServerInfo = new ServerInfo(@"ServerInfo.cfg");
 
+    PrefabList PrefabList = new PrefabList(@"CharacterPrefabs.txt");
+
     private Client RiptideClient;
 
     private Interpolation Interpolation;
@@ -130,6 +132,8 @@ public class TMPSClient
             throw new Exception("Couldn't find CharacterMoverComponent for LocalPlayer");
         }
 
+        _LocalPlayer.PrefabPath = PrefabList.Characters[_LocalPlayer.Entity.GetName()];
+
         //_LocalPlayer.Transform.SnapToGroundOn = characterMoverComponent.get_SnapToGroundOn();
     }
 
@@ -214,6 +218,20 @@ public class TMPSClient
                 {
                     RiptideLogger.Log(LogType.Error, "TMPS", String.Format("Received bad Transform for {0}({1})", networkedPlayer.Name, networkedPlayer.PlayerId));
                 }
+
+                if (networkedPlayer.PrefabPath != PlayerPool[i].PrefabPath)
+                {
+                    PlayerPool[i].Entity.Delete();
+
+                    PlayerPool[i].PrefabPath = networkedPlayer.PrefabPath;
+
+                    PlayerPool[i].Transform = networkedPlayer.Transform;
+
+                    CharacterSpawnManager.SpawnCharacter(PlayerPool[i]);
+
+                    RiptideLogger.Log(LogType.Info, "TMPS", String.Format("{0}({1}) changed Character to {2}", networkedPlayer.Name, networkedPlayer.PlayerId, PrefabList.GetCharacterNameFromPrefab(networkedPlayer.PrefabPath)));
+                }
+
                 return;
             }
         }

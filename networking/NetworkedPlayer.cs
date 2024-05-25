@@ -9,8 +9,6 @@ namespace Networking
     [Networked(3)]
     public class NetworkedPlayer
     {
-        [NotNetworked]
-        private const int PacketDepth = 16;
         //[NotNetworked]
         //private int Count = 0;
 
@@ -73,7 +71,7 @@ namespace Networking
             PreviousTransform previousTransform = new PreviousTransform(transform, elapsedTime);
             PreviousTransforms.Add(previousTransform);
 
-            if (PreviousTransforms.Count > PacketDepth)
+            if (PreviousTransforms.Count > Utils.PacketDepth)
             {
                 PreviousTransforms.RemoveAt(0);
             }

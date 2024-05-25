@@ -6,21 +6,18 @@ using System.Diagnostics;
 namespace tmpsclient;
 public class Interpolation
 {
-    public const int PacketDepth = 16;
-    public const int PacketOffset = 8;
-
-    double[] pointsArrayX = new double[PacketDepth];
-    double[] pointsArrayY = new double[PacketDepth];
-    double[] pointsArrayZ = new double[PacketDepth];
-    double[] pointsArrayRX = new double[PacketDepth];
-    double[] pointsArrayRY = new double[PacketDepth];
-    double[] pointsArrayRZ = new double[PacketDepth];
-    double[] valuesArrayX = new double[PacketDepth];
-    double[] valuesArrayY = new double[PacketDepth];
-    double[] valuesArrayZ = new double[PacketDepth];
-    double[] valuesArrayRX = new double[PacketDepth];
-    double[] valuesArrayRY = new double[PacketDepth];
-    double[] valuesArrayRZ = new double[PacketDepth];
+    double[] pointsArrayX = new double[Utils.PacketDepth];
+    double[] pointsArrayY = new double[Utils.PacketDepth];
+    double[] pointsArrayZ = new double[Utils.PacketDepth];
+    double[] pointsArrayRX = new double[Utils.PacketDepth];
+    double[] pointsArrayRY = new double[Utils.PacketDepth];
+    double[] pointsArrayRZ = new double[Utils.PacketDepth];
+    double[] valuesArrayX = new double[Utils.PacketDepth];
+    double[] valuesArrayY = new double[Utils.PacketDepth];
+    double[] valuesArrayZ = new double[Utils.PacketDepth];
+    double[] valuesArrayRX = new double[Utils.PacketDepth];
+    double[] valuesArrayRY = new double[Utils.PacketDepth];
+    double[] valuesArrayRZ = new double[Utils.PacketDepth];
 
     private Stopwatch TimeSinceLastTick;
 
@@ -33,7 +30,7 @@ public class Interpolation
     {
         foreach (NetworkedPlayer player in PlayerPool)
         {
-            if (player.PreviousTransforms.Count < PacketDepth) {
+            if (player.PreviousTransforms.Count < Utils.PacketDepth) {
                 //Console.WriteLine("Only Have ({0}/{1}) Transforms", player.PreviousTransforms.Count, PacketDepth);
                 continue;
             }
@@ -49,7 +46,7 @@ public class Interpolation
 
             foreach (PreviousTransform previousTransform in player.PreviousTransforms)
             {
-                if (count < PacketDepth - PacketOffset)
+                if (count < Utils.PacketDepth - Utils.PacketOffset)
                 {
                     elapsedTime += previousTransform.ElapsedTime;
                 }

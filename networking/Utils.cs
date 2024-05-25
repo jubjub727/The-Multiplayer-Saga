@@ -17,6 +17,9 @@
 
         public const int DefaultTimeout = 3000;
 
+        public const int PacketDepth = 16;
+        public const int PacketOffset = 8;
+
         public static bool IsBadFloat(float x)
         {
             return float.IsNaN(x) || float.IsInfinity(x);

@@ -22,6 +22,7 @@
                 Size += dataSegment.Size;
             }
 
+            Size += sizeof(UInt64);
             Tick = tick;
         }
 

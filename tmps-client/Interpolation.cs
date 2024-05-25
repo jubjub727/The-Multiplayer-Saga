@@ -6,8 +6,8 @@ using System.Diagnostics;
 namespace tmpsclient;
 public class Interpolation
 {
-    public const int PacketDepth = 32;
-    public const int PacketOffset = 16;
+    public const int PacketDepth = 16;
+    public const int PacketOffset = 8;
 
     double[] pointsArrayX = new double[PacketDepth];
     double[] pointsArrayY = new double[PacketDepth];

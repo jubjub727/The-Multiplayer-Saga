@@ -212,8 +212,6 @@ public class TMPSClient
 
         Interpolation.Interpolate(PlayerPool);
 
-        ProcessActions();
-
         GameUtil.StopProcessingScopes();
     }
 
@@ -292,6 +290,8 @@ public class TMPSClient
                 }
             }
         }
+
+        ProcessActions();
 
         TickReply();
         TimeSinceLastTick.Restart();

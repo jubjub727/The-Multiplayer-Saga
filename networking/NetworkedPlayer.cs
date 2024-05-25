@@ -114,9 +114,9 @@ namespace Networking
             currentTransform.SetRotation(transform.RX, transform.RY, transform.RZ);
 
             NuVec distance = new NuVec();
-            distance.X = Math.Clamp((transform.X - X) * Utils.Tickrate, -5f, 5f);
-            distance.Y = Math.Clamp((transform.Y - Y) * Utils.Tickrate, -5f, 5f);
-            distance.Z = Math.Clamp((transform.Z - Z) * Utils.Tickrate, -5f, 5f);
+            distance.X = Math.Clamp((transform.X - X) * Utils.Tickrate/2, -2.5f, 2.5f);
+            distance.Y = Math.Clamp((transform.Y - Y) * Utils.Tickrate/2, -2.5f, 2.5f);
+            distance.Z = Math.Clamp((transform.Z - Z) * Utils.Tickrate/2, -2.5f, 2.5f);
 
             /*if (Count > 64)
             {
@@ -139,8 +139,6 @@ namespace Networking
 
             unsafe
             {
-                Console.WriteLine("X - {0}, Y - {1}, Z - {2}", distance.X, distance.Y, distance.Z);
-
                 NuVec* distancePtr = &distance;
 
                 horizontalMover.SetMoveLaneVelocity((NuVec3.Handle)(nint)distancePtr);

@@ -170,6 +170,8 @@ public class TMPSClient
             RiptideClient.TimeoutTime = Utils.DefaultTimeout;
 
             _RiptideConnected = true;
+
+            TimeSinceLastTick.Start();
         }
 
         if (_FirstConnect == true && PlayerEntityReady())
@@ -185,8 +187,6 @@ public class TMPSClient
             _LocalPlayer.IsLocal = true;
 
             _FirstConnect = true;
-
-            TimeSinceLastTick.Start();
         }
 
         RiptideClient.Update();
@@ -220,8 +220,6 @@ public class TMPSClient
 
         if (_FirstConnect && networkedPlayer.PlayerId != _LocalPlayer.PlayerId)
         {
-            networkedPlayer.SetTransform(networkedPlayer.Transform, TimeSinceLastTick.ElapsedTicks);
-
             PlayerPool.Add(networkedPlayer);
 
             CharacterSpawnManager.SpawnCharacter(networkedPlayer);
@@ -249,7 +247,6 @@ public class TMPSClient
 
     private void HandleTick(Message message)
     {
-        TimeSinceLastTick.Stop();
         Packet packet = new Packet(message.GetBytes());
         NetworkMessage tickMessage = packet.Deserialize();
 

@@ -99,5 +99,6 @@ public class Interpolation
 
             player.ApplyTransform(transform);
         }
+        TimeSinceLastTick.Restart();
     }
 }

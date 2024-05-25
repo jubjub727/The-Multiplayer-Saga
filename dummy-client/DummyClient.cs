@@ -179,36 +179,39 @@ namespace dummy_client
             {
                 timeElapsed.Start();
 
-                if (GetAsyncKeyState(A) != 0)
+                if (_FirstConnect)
                 {
-                    _LocalPlayer.Transform.X = _LocalPlayer.Transform.X + HorizontalSpeed;
-                }
+                    if (GetAsyncKeyState(A) != 0)
+                    {
+                        _LocalPlayer.Transform.X = _LocalPlayer.Transform.X + HorizontalSpeed;
+                    }
 
-                if (GetAsyncKeyState(D) != 0)
-                {
-                    _LocalPlayer.Transform.X = _LocalPlayer.Transform.X - HorizontalSpeed;
-                }
+                    if (GetAsyncKeyState(D) != 0)
+                    {
+                        _LocalPlayer.Transform.X = _LocalPlayer.Transform.X - HorizontalSpeed;
+                    }
 
-                if (GetAsyncKeyState(S) != 0)
-                {
-                    _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z + HorizontalSpeed;
-                }
+                    if (GetAsyncKeyState(S) != 0)
+                    {
+                        _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z + HorizontalSpeed;
+                    }
 
-                if (GetAsyncKeyState(W) != 0)
-                {
-                    _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z - HorizontalSpeed;
-                }
+                    if (GetAsyncKeyState(W) != 0)
+                    {
+                        _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z - HorizontalSpeed;
+                    }
 
-                if (timeSinceJump.ElapsedMilliseconds > 500 && GetAsyncKeyState(PAGE_DOWN) != 0)
-                {
-                    JumpEvent(0.56406253576278687f);
-                    timeSinceJump.Restart();
-                }
+                    if (timeSinceJump.ElapsedMilliseconds > 500 && GetAsyncKeyState(PAGE_DOWN) != 0)
+                    {
+                        JumpEvent(0.56406253576278687f);
+                        timeSinceJump.Restart();
+                    }
 
-                if (count > 240 && _FirstConnect)
-                {
-                    Console.WriteLine("X - {0}, Y - {1}, Z - {2}", _LocalPlayer.Transform.X, _LocalPlayer.Transform.Y, _LocalPlayer.Transform.Z);
-                    count = 0;
+                    if (count > 240)
+                    {
+                        Console.WriteLine("X - {0}, Y - {1}, Z - {2}", _LocalPlayer.Transform.X, _LocalPlayer.Transform.Y, _LocalPlayer.Transform.Z);
+                        count = 0;
+                    }
                 }
 
                 OnUpdate();

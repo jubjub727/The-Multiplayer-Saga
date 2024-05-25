@@ -169,7 +169,7 @@ public class TMPSClient
     {
         foreach (NetworkedAction action in ActionPool)
         {
-            if (action.Tick < CurrentTick+16)
+            if (action.Tick < CurrentTick+Interpolation.PacketOffset)
             {
                 action.ProcessAction();
             }

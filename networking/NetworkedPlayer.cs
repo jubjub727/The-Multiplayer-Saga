@@ -10,7 +10,7 @@ namespace Networking
     public class NetworkedPlayer
     {
         [NotNetworked]
-        private const int PacketDepth = 16;
+        private const int PacketDepth = 32;
         //[NotNetworked]
         //private int Count = 0;
 

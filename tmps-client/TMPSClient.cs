@@ -132,7 +132,7 @@ public class TMPSClient
             throw new Exception("Couldn't find CharacterMoverComponent for LocalPlayer");
         }
 
-        _LocalPlayer.PrefabPath = PrefabList.Characters[_LocalPlayer.Entity.GetName()];
+        _LocalPlayer.PrefabPath = PrefabList.GetPrefabFromCharacterName(_LocalPlayer.Entity.GetName());
 
         //_LocalPlayer.Transform.SnapToGroundOn = characterMoverComponent.get_SnapToGroundOn();
     }

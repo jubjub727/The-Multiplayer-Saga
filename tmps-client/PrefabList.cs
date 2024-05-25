@@ -8,7 +8,9 @@ namespace tmpsclient
 {
     public class PrefabList
     {
-        public Dictionary<string, string> Characters;
+        private Dictionary<string, string> Characters = new Dictionary<string, string>();
+
+        private string[] Prefabs;
 
         public string GetCharacterNameFromPrefab(string prefab)
         {
@@ -17,19 +19,28 @@ namespace tmpsclient
             return name.Split('.')[0];
         }
 
+        public string GetPrefabFromCharacterName(string characterName)
+        {
+            return Characters[characterName];
+        }
+
         private void AddPrefab(string prefab)
         {
             Characters.Add(GetCharacterNameFromPrefab(prefab), prefab);
         }
 
-        public PrefabList(string prefabListPath)
+        private void LoadCharacterNames()
         {
-            string[] prefabs = File.ReadAllLines(prefabListPath);
-
-            foreach (string prefab in prefabs)
+            foreach (string prefab in Prefabs)
             {
                 AddPrefab(prefab);
-            }   
+            }
+        }
+
+        public PrefabList(string prefabListPath)
+        {
+            Prefabs = File.ReadAllLines(prefabListPath);
+            LoadCharacterNames();
         }
     }
 }

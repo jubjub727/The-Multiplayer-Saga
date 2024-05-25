@@ -32,6 +32,8 @@ namespace dummy_client
 
         private NetworkedPlayer _LocalPlayer;
 
+        private UInt64 CurrentTick = 0;
+
         private bool _FirstConnect = false;
 
         private bool _RiptideConnected = false;
@@ -73,6 +75,7 @@ namespace dummy_client
 
             RiptideClient.Update();
         }
+
         private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)
         {
             for (int i = 0; i < PlayerPool.Count; i++)
@@ -100,7 +103,7 @@ namespace dummy_client
                 DataSegment[] dataSegments = new DataSegment[1];
                 dataSegments[0] = new DataSegment(_LocalPlayer);
 
-                NetworkMessage tickMessage = new NetworkMessage(dataSegments);
+                NetworkMessage tickMessage = new NetworkMessage(dataSegments, CurrentTick);
 
                 Message message = Message.Create(MessageSendMode.Unreliable, Utils.CLIENT_TICK_MESSAGE_ID);
                 message.AddBytes(tickMessage.Serialize());
@@ -116,6 +119,7 @@ namespace dummy_client
                 Message message = messageReceivedArgs.Message;
                 Packet packet = new Packet(message.GetBytes());
                 NetworkMessage tickMessage = packet.Deserialize();
+                CurrentTick = tickMessage.Tick;
 
                 if (tickMessage.DataSegments != null)
                 {
@@ -154,12 +158,12 @@ namespace dummy_client
         {
             if (_FirstConnect)
             {
-                NetworkedAction jumpAction = new NetworkedAction(_LocalPlayer.PlayerId, Utils.JUMP_ACTION_ID, amount);
+                NetworkedAction jumpAction = new NetworkedAction(_LocalPlayer.PlayerId, Utils.JUMP_ACTION_ID, amount, CurrentTick);
 
                 DataSegment[] dataSegments = new DataSegment[1];
                 dataSegments[0] = new DataSegment(jumpAction);
 
-                NetworkMessage actionMessage = new NetworkMessage(dataSegments);
+                NetworkMessage actionMessage = new NetworkMessage(dataSegments, CurrentTick);
 
                 Message message = Message.Create(MessageSendMode.Unreliable, Utils.CLIENT_ACTION_MESSAGE_ID);
                 message.AddBytes(actionMessage.Serialize());

@@ -7,6 +7,7 @@ namespace Networking
     [Networked(4)]
     public class NetworkedAction
     {
+        public UInt64 Tick;
         public UInt16 PlayerId;
         public UInt16 ActionId;
         public float Amount;
@@ -19,11 +20,12 @@ namespace Networking
 
         }
 
-        public NetworkedAction(UInt16 playerId, UInt16 actionId, float amount)
+        public NetworkedAction(UInt16 playerId, UInt16 actionId, float amount, UInt64 tick)
         {
             PlayerId = playerId;
             ActionId = actionId;
             Amount = amount;
+            Tick = tick;
         }
 
         public void AssignPlayer(NetworkedPlayer player)

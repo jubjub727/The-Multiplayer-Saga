@@ -105,10 +105,10 @@ namespace tmpsserver
                 dataSegmentList.Add(dataSegment);
             }
 
-            NetworkMessage tick = new NetworkMessage(dataSegmentList.ToArray());
+            NetworkMessage packet = new NetworkMessage(dataSegmentList.ToArray(), TickCount);
 
             Message message = Message.Create(MessageSendMode.Unreliable, Utils.SERVER_TICK_MESSAGE_ID);
-            message.AddBytes(tick.Serialize());
+            message.AddBytes(packet.Serialize());
 
             RiptideServer.SendToAll(message);
 
@@ -160,7 +160,7 @@ namespace tmpsserver
                         DataSegment[] dataSegments = new DataSegment[1];
                         dataSegments[0] = new DataSegment(networkedAction);
 
-                        NetworkMessage actionMessage = new NetworkMessage(dataSegments);
+                        NetworkMessage actionMessage = new NetworkMessage(dataSegments, TickCount);
 
                         Message newMessage = Message.Create(MessageSendMode.Unreliable, Utils.SERVER_ACTION_MESSAGE_ID);
                         newMessage.AddBytes(actionMessage.Serialize());

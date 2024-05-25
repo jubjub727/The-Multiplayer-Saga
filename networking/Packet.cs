@@ -7,7 +7,7 @@ namespace Networking
         public int writeHead = 0;
         public int readHead = 0;
         public Byte[] data;
-        public NetworkMessage tick;
+        public NetworkMessage networkMessaage;
 
         public void WriteString(string input)
         {
@@ -158,33 +158,34 @@ namespace Networking
 
         public NetworkMessage Deserialize()
         {
-            tick.Size = ReadUInt32();
-            tick.NumberOfDataSegments = ReadInt32();
+            networkMessaage.Size = ReadUInt32();
+            networkMessaage.Tick = ReadUInt64();
+            networkMessaage.NumberOfDataSegments = ReadInt32();
 
-            if (tick.NumberOfDataSegments == 0)
+            if (networkMessaage.NumberOfDataSegments == 0)
             {
-                return tick;
+                return networkMessaage;
             }
 
-            tick.DataSegments = new DataSegment[tick.NumberOfDataSegments];
+            networkMessaage.DataSegments = new DataSegment[networkMessaage.NumberOfDataSegments];
 
-            for (int i = 0; i < tick.DataSegments.Length; i++)
+            for (int i = 0; i < networkMessaage.DataSegments.Length; i++)
             {
-                tick.DataSegments[i] = DataSegment.Deserialize(this);
+                networkMessaage.DataSegments[i] = DataSegment.Deserialize(this);
             }
 
-            return tick;
+            return networkMessaage;
         }
 
         public Packet(UInt32 size)
         {
-            tick = new NetworkMessage();
+            networkMessaage = new NetworkMessage();
             data = new Byte[size];
         }
 
         public Packet(Byte[] packet)
         {
-            tick = new NetworkMessage();
+            networkMessaage = new NetworkMessage();
             data = packet;
         }
     }

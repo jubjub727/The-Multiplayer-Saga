@@ -32,9 +32,13 @@ public class TMPSClient
 
     private List<NetworkedPlayer> PlayerPool = new List<NetworkedPlayer>();
 
+    private List<NetworkedAction> ActionPool = new List<NetworkedAction>();
+
     private NetworkedPlayer _LocalPlayer;
 
     private Stopwatch TimeSinceLastTick = new Stopwatch();
+
+    private UInt64 CurrentTick = 0;
 
     private bool _FirstConnect = false;
 
@@ -101,12 +105,12 @@ public class TMPSClient
     {
         if (_FirstConnect)
         {
-            NetworkedAction jumpAction = new NetworkedAction(_LocalPlayer.PlayerId, Utils.JUMP_ACTION_ID, amount);
+            NetworkedAction jumpAction = new NetworkedAction(_LocalPlayer.PlayerId, Utils.JUMP_ACTION_ID, amount, CurrentTick);
 
             DataSegment[] dataSegments = new DataSegment[1];
             dataSegments[0] = new DataSegment(jumpAction);
 
-            NetworkMessage actionMessage = new NetworkMessage(dataSegments);
+            NetworkMessage actionMessage = new NetworkMessage(dataSegments, CurrentTick);
 
             Message message = Message.Create(MessageSendMode.Unreliable, Utils.CLIENT_ACTION_MESSAGE_ID);
             message.AddBytes(actionMessage.Serialize());
@@ -161,6 +165,17 @@ public class TMPSClient
         }
     }
 
+    private void ProcessActions()
+    {
+        foreach (NetworkedAction action in ActionPool)
+        {
+            if (action.Tick < CurrentTick+16)
+            {
+                action.ProcessAction();
+            }
+        }
+    }
+
     public void OnUpdate()
     {
         if (CheckIfReady() == false) return;
@@ -195,11 +210,9 @@ public class TMPSClient
 
         RiptideClient.Update();
 
-        var cursorPos = Console.GetCursorPosition();
-        Console.Write("Ping: {0}                    ", RiptideClient.RTT);
-        Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
-
         Interpolation.Interpolate(PlayerPool);
+
+        ProcessActions();
 
         GameUtil.StopProcessingScopes();
     }
@@ -254,7 +267,7 @@ public class TMPSClient
             DataSegment[] dataSegments = new DataSegment[1];
             dataSegments[0] = new DataSegment(_LocalPlayer);
 
-            NetworkMessage tickMessage = new NetworkMessage(dataSegments);
+            NetworkMessage tickMessage = new NetworkMessage(dataSegments, CurrentTick);
 
             Message message = Message.Create(MessageSendMode.Unreliable, Utils.CLIENT_TICK_MESSAGE_ID);
             message.AddBytes(tickMessage.Serialize());
@@ -267,6 +280,7 @@ public class TMPSClient
     {
         Packet packet = new Packet(message.GetBytes());
         NetworkMessage tickMessage = packet.Deserialize();
+        CurrentTick = tickMessage.Tick;
 
         if (tickMessage.DataSegments != null)
         {
@@ -298,11 +312,11 @@ public class TMPSClient
     private void HandleAction(Message message)
     {
         Packet packet = new Packet(message.GetBytes());
-        NetworkMessage tickMessage = packet.Deserialize();
+        NetworkMessage actionMessage = packet.Deserialize();
 
-        if (tickMessage.DataSegments != null)
+        if (actionMessage.DataSegments != null)
         {
-            foreach (DataSegment dataSegment in tickMessage.DataSegments)
+            foreach (DataSegment dataSegment in actionMessage.DataSegments)
             {
                 if (dataSegment.Data is NetworkedAction)
                 {
@@ -322,7 +336,7 @@ public class TMPSClient
 
                     networkedAction.AssignPlayer(networkedPlayer);
 
-                    networkedAction.ProcessAction();
+                    ActionPool.Add(networkedAction);
                 }
             }
         }

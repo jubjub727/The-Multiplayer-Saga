@@ -125,37 +125,29 @@ namespace Networking
                 throw new Exception("Couldn't find CharacterMoverComponent for entity");
             }
 
-            NuVec currentVelocity;
-
-            unsafe
+            if (Utils.IsBadFloat(transform.VX))
             {
-                NuVec* currentVelocityPtr = &currentVelocity;
-                characterMoverComponent.GetVelocity((NUVEC.Handle)(nint)currentVelocityPtr);
+                transform.VX = 0;
             }
 
-            if (Utils.IsBadFloat(currentVelocity.X))
+            if (Utils.IsBadFloat(transform.VY))
             {
-                currentVelocity.X = 0;
+                transform.VY = 0;
             }
 
-            if (Utils.IsBadFloat(currentVelocity.Y))
+            if (Utils.IsBadFloat(transform.VZ))
             {
-                currentVelocity.Y = 0;
+                transform.VZ = 0;
             }
 
-            if (Utils.IsBadFloat(currentVelocity.Z))
-            {
-                currentVelocity.Z = 0;
-            }
-
-            float ratio = (float)GameUtil.TimeSinceLastFrame.Elapsed.TotalMilliseconds * 0.75f;
+            //float ratio = (float)GameUtil.TimeSinceLastFrame.Elapsed.TotalMilliseconds * 0.75f;
 
             NuVec newVelocity = new NuVec();
-            newVelocity.X = currentVelocity.X + ((transform.X - X) * 1.75f);
-            newVelocity.Y = currentVelocity.Y + ((transform.Y - Y) * 1.75f);
-            newVelocity.Z = currentVelocity.Z + ((transform.Z - Z) * 1.75f);
+            newVelocity.X = transform.VX + (transform.X - X);
+            newVelocity.Y = transform.VY + (transform.Y - Y);
+            newVelocity.Z = transform.VZ + (transform.Z - Z);
 
-            Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, currentVelocity.Z, newVelocity.Z);
+            Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, transform.VZ, newVelocity.Z);
 
             /*if (Count > 64)
             {

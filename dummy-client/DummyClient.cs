@@ -212,6 +212,7 @@ namespace dummy_client
                     if (timeSinceJump.ElapsedMilliseconds < 2500)//&& GetAsyncKeyState(PAGE_DOWN) != 0)
                     {
                         _LocalPlayer.Transform.Z -= speed;
+                        _LocalPlayer.Transform.VZ -= speed / 0.04166f;
                     }
                     else
                     {

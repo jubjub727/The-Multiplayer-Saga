@@ -42,23 +42,35 @@ namespace Networking
                     return;
                 }
 
-                CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
+                try
+                {
+                    CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
 
-                int* moveModePtr = (int*)((nint)characterMoverComponent + GameUtil.MoveModeOffset);
-                *moveModePtr = 2;
+                    if (characterMoverComponent == nint.Zero)
+                    {
+                        return;
+                    }
 
-                //bool snapToGroundOn = false;
+                    int* moveModePtr = (int*)((nint)characterMoverComponent + GameUtil.MoveModeOffset);
+                    *moveModePtr = 2;
 
-                //characterMoverComponent.set_SnapToGroundOn(ref snapToGroundOn);
-                characterMoverComponent.Jump(ref Amount);
+                    //bool snapToGroundOn = false;
 
-                CheckForFalling.Handle checkForFalling = (CheckForFalling.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CheckForFalling", false);
+                    //characterMoverComponent.set_SnapToGroundOn(ref snapToGroundOn);
+                    characterMoverComponent.Jump(ref Amount);
 
-                checkForFalling.SetCheckFalling(false);
+                    CheckForFalling.Handle checkForFalling = (CheckForFalling.Handle)(nint)Player.Entity.FindComponentByTypeNameRecursive("CheckForFalling", false);
 
-                //Player.JustJumped = true;
-                //characterMoverComponent.set_SnapToGroundOn(ref Player.Transform.SnapToGroundOn);
-                //*moveModePtr = 0;
+                    checkForFalling.SetCheckFalling(false);
+
+                    //Player.JustJumped = true;
+                    //characterMoverComponent.set_SnapToGroundOn(ref Player.Transform.SnapToGroundOn);
+                    //*moveModePtr = 0;
+                }
+                catch
+                {
+                    return;
+                }
             }
         }
 

@@ -67,7 +67,7 @@ namespace dummy_client
             {
                 NetworkedPlayer localPlayerNetworked = new NetworkedPlayer(RiptideClient.Id, Utils.DummyClientName);
                 localPlayerNetworked.IsLocal = true;
-                localPlayerNetworked.Transform.Z = 1f;
+                localPlayerNetworked.Transform.Z = -1f;
 
                 _LocalPlayer = localPlayerNetworked;
 
@@ -176,7 +176,7 @@ namespace dummy_client
         private void MainLoop()
         {
             int count = 0;
-            int offset = 1;
+            bool justJumped = false;
             Stopwatch timeElapsed = new Stopwatch();
             Stopwatch timeSinceJump = new Stopwatch();
             timeSinceJump.Start();
@@ -207,13 +207,25 @@ namespace dummy_client
                         _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z - HorizontalSpeed;
                     }*/
 
-                    if (timeSinceJump.ElapsedMilliseconds > 1500 )//&& GetAsyncKeyState(PAGE_DOWN) != 0)
+                    if (timeSinceJump.ElapsedMilliseconds > 1500)//&& GetAsyncKeyState(PAGE_DOWN) != 0)
                     {
-                        _LocalPlayer.Transform.Z += offset;
-                        offset = offset * -1;
-                        if (offset < 0)
+                        _LocalPlayer.Transform.Z -= HorizontalSpeed;
+                        if (!justJumped)
+                        {
                             JumpEvent(0.56406253576278687f);
+                            justJumped=true;
+                        }
+                        
                         timeSinceJump.Restart();
+                    }
+                    else
+                    {
+                        _LocalPlayer.Transform.Z += HorizontalSpeed;
+
+                        if (justJumped)
+                        {
+                            justJumped = false;
+                        }
                     }
 
                     if (count > 240)

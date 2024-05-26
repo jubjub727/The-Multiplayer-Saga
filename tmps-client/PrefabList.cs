@@ -21,7 +21,15 @@ namespace tmpsclient
 
         public string GetPrefabFromCharacterName(string characterName)
         {
-            return Characters[characterName];
+            try
+            {
+                return Characters[characterName];
+            }
+            catch
+            {
+                return "Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked";
+            }
+            
         }
 
         private void AddPrefab(string prefab)

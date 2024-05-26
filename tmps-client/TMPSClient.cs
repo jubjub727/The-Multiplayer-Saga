@@ -167,11 +167,12 @@ public class TMPSClient
 
     private void ProcessActions()
     {
-        foreach (NetworkedAction action in ActionPool)
+        for (int i = ActionPool.Count -1; i >= 0; i--)
         {
-            if (action.Tick < CurrentTick+Utils.PacketOffset)
+            if (ActionPool[i].Tick < CurrentTick+Utils.PacketOffset)
             {
-                action.ProcessAction();
+                ActionPool[i].ProcessAction();
+                ActionPool.RemoveAt(i);
             }
         }
     }

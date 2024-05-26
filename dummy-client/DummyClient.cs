@@ -176,7 +176,7 @@ namespace dummy_client
         private void MainLoop()
         {
             int count = 0;
-            float speed = HorizontalSpeed / 150;
+            float speed = HorizontalSpeed / 100;
             Stopwatch timeElapsed = new Stopwatch();
             Stopwatch timeSinceJump = new Stopwatch();
             timeSinceJump.Start();

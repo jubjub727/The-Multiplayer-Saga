@@ -214,7 +214,7 @@ namespace dummy_client
                     else
                     {
                         speed = speed * -1f;
-                        //JumpEvent(0.56406253576278687f);
+                        JumpEvent(0.56406253576278687f);
                         timeSinceJump.Restart();
                     }
 

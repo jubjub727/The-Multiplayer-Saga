@@ -1,4 +1,5 @@
 ﻿using OMP.LSWTSS.CApi1;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace gameutil
@@ -42,6 +43,9 @@ namespace gameutil
         public static nttUniverseProcessingScope.Handle nttUniverseProcessingScopeHandle;
 
         public static ApiWorldProcessingScope.Handle apiWorldProcessingScopeHandle;
+
+        // |TIMERS|
+        public static Stopwatch TimeSinceLastFrame = Stopwatch.StartNew();
 
         // |STRUCTS|
         [StructLayout(LayoutKind.Sequential)]

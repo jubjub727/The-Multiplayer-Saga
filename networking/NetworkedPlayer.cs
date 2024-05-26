@@ -75,6 +75,8 @@ namespace Networking
             {
                 PreviousTransforms.RemoveAt(0);
             }
+
+            Transform = transform;
         }
 
         public NetworkedPlayer(UInt16 playerId, string name)
@@ -111,10 +113,14 @@ namespace Networking
             currentTransform.GetPosition(out X, out Y, out Z);
             currentTransform.SetRotation(transform.RX, transform.RY, transform.RZ);
 
+            float ratio = Utils.Ticktime / (float)GameUtil.TimeSinceLastFrame.Elapsed.TotalMilliseconds;
+
             NuVec distance = new NuVec();
-            distance.X = Math.Clamp((transform.X - X) * Utils.Tickrate/2, -2.5f, 2.5f);
-            distance.Y = Math.Clamp((transform.Y - Y) * Utils.Tickrate/2, -2.5f, 2.5f);
-            distance.Z = Math.Clamp((transform.Z - Z) * Utils.Tickrate/2, -2.5f, 2.5f);
+            distance.X = Math.Clamp((transform.X - X) * (Utils.Ticktime / ratio), -2f, 2f);
+            distance.Y = Math.Clamp((transform.Y - Y) * (Utils.Ticktime / ratio), -2f, 2f);
+            distance.Z = Math.Clamp((transform.Z - Z) * (Utils.Ticktime / ratio), -2f, 2f);
+
+            Console.WriteLine("Distance: {0}", transform.Z - Z);
 
             /*if (Count > 64)
             {

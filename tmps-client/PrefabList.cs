@@ -21,15 +21,14 @@ namespace tmpsclient
 
         public string GetPrefabFromCharacterName(string characterName)
         {
-            try
+            if (Characters.ContainsKey(characterName))
             {
                 return Characters[characterName];
             }
-            catch
+            else
             {
                 return "Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked";
             }
-            
         }
 
         private void AddPrefab(string prefab)

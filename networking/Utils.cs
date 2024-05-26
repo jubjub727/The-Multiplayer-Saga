@@ -14,10 +14,11 @@
         public const string DummyClientName = "DummyClient";
 
         public const int Tickrate = 64;
+        public const float Ticktime = 1000f / Tickrate;
 
         public const int DefaultTimeout = 3000;
 
-        public const int PacketDepth = 24;
+        public const int PacketDepth = 20;
         public const int PacketOffset = 20;
 
         public static bool IsBadFloat(float x)

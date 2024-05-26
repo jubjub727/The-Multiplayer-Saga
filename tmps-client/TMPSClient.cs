@@ -214,6 +214,8 @@ public class TMPSClient
         Interpolation.Interpolate(PlayerPool);
 
         GameUtil.StopProcessingScopes();
+
+        GameUtil.TimeSinceLastFrame.Restart();
     }
 
     private void ProcessNetworkedPlayer(NetworkedPlayer networkedPlayer)

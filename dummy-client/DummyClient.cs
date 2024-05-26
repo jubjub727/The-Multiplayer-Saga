@@ -225,10 +225,12 @@ namespace dummy_client
                         if (stormtrooper)
                         {
                             _LocalPlayer.PrefabPath = "Chars/Minifig/Luke/Luke_Black.prefab_baked";
+                            stormtrooper = false;
                         }
                         else
                         {
                             _LocalPlayer.PrefabPath = "Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked";
+                            stormtrooper = true;
                         }
 
                         timeSinceChange.Restart();

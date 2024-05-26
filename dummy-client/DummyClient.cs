@@ -177,9 +177,11 @@ namespace dummy_client
         {
             int count = 0;
             float speed = HorizontalSpeed / 100;
+            bool stormtrooper = true;
             Stopwatch timeElapsed = new Stopwatch();
-            Stopwatch timeSinceJump = new Stopwatch();
-            timeSinceJump.Start();
+            Stopwatch timeSinceJump = Stopwatch.StartNew();
+
+            Stopwatch timeSinceChange = Stopwatch.StartNew();
 
             while (true)
             {
@@ -214,8 +216,22 @@ namespace dummy_client
                     else
                     {
                         speed = speed * -1f;
-                        JumpEvent(0.56406253576278687f);
+                        //JumpEvent(0.56406253576278687f);
                         timeSinceJump.Restart();
+                    }
+
+                    if (timeSinceChange.ElapsedMilliseconds > 1000 * 30)
+                    {
+                        if (stormtrooper)
+                        {
+                            _LocalPlayer.PrefabPath = "Chars/Minifig/Luke/Luke_Black.prefab_baked";
+                        }
+                        else
+                        {
+                            _LocalPlayer.PrefabPath = "Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked";
+                        }
+
+                        timeSinceChange.Restart();
                     }
 
                     if (count > 240)

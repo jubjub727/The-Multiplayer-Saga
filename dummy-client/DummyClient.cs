@@ -14,8 +14,8 @@ namespace dummy_client
 {
     public class DummyClient
     {
-        [DllImport("user32.dll")]
-        static extern short GetAsyncKeyState(int vKey);
+        //[DllImport("user32.dll")]
+        //static extern short GetAsyncKeyState(int vKey);
 
         private const float HorizontalSpeed = 0.01f;
 
@@ -67,6 +67,7 @@ namespace dummy_client
             {
                 NetworkedPlayer localPlayerNetworked = new NetworkedPlayer(RiptideClient.Id, Utils.DummyClientName);
                 localPlayerNetworked.IsLocal = true;
+                localPlayerNetworked.Transform.Z = 1f;
 
                 _LocalPlayer = localPlayerNetworked;
 
@@ -175,6 +176,7 @@ namespace dummy_client
         private void MainLoop()
         {
             int count = 0;
+            int offset = 1;
             Stopwatch timeElapsed = new Stopwatch();
             Stopwatch timeSinceJump = new Stopwatch();
             timeSinceJump.Start();
@@ -185,7 +187,7 @@ namespace dummy_client
 
                 if (_FirstConnect)
                 {
-                    if (GetAsyncKeyState(A) != 0)
+                    /*if (GetAsyncKeyState(A) != 0)
                     {
                         _LocalPlayer.Transform.X = _LocalPlayer.Transform.X + HorizontalSpeed;
                     }
@@ -203,11 +205,14 @@ namespace dummy_client
                     if (GetAsyncKeyState(W) != 0)
                     {
                         _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z - HorizontalSpeed;
-                    }
+                    }*/
 
-                    if (timeSinceJump.ElapsedMilliseconds > 500 && GetAsyncKeyState(PAGE_DOWN) != 0)
+                    if (timeSinceJump.ElapsedMilliseconds > 1500 )//&& GetAsyncKeyState(PAGE_DOWN) != 0)
                     {
-                        JumpEvent(0.56406253576278687f);
+                        _LocalPlayer.Transform.Z += offset;
+                        offset = offset * -1;
+                        if (offset < 0)
+                            JumpEvent(0.56406253576278687f);
                         timeSinceJump.Restart();
                     }
 

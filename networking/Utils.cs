@@ -18,8 +18,8 @@
 
         public const int DefaultTimeout = 3000;
 
-        public const int PacketDepth = 20;
-        public const int PacketOffset = 20;
+        public const int PacketDepth = 24;
+        public const int PacketOffset = 16;
 
         public static bool IsBadFloat(float x)
         {

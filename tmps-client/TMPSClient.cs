@@ -6,6 +6,7 @@ using Riptide.Utils;
 using tmpsclient;
 using System.Runtime.InteropServices;
 using gameutil;
+using static gameutil.GameUtil;
 
 namespace OMP.LSWTSS;
 
@@ -135,6 +136,18 @@ public class TMPSClient
         {
             throw new Exception("Couldn't find CharacterMoverComponent for LocalPlayer");
         }
+
+        NuVec currentVelocity;
+
+        unsafe
+        {
+            NuVec* currentVelocityPtr = &currentVelocity;
+            characterMoverComponent.GetVelocity((NUVEC.Handle)(nint)currentVelocityPtr);
+        }
+
+        _LocalPlayer.Transform.VX = currentVelocity.X;
+        _LocalPlayer.Transform.VY = currentVelocity.Y;
+        _LocalPlayer.Transform.VZ = currentVelocity.Z;
 
         _LocalPlayer.PrefabPath = PrefabList.GetPrefabFromCharacterName(_LocalPlayer.Entity.GetName());
 

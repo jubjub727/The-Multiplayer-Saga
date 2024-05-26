@@ -113,14 +113,49 @@ namespace Networking
             currentTransform.GetPosition(out X, out Y, out Z);
             currentTransform.SetRotation(transform.RX, transform.RY, transform.RZ);
 
-            float ratio = Utils.Ticktime / (float)GameUtil.TimeSinceLastFrame.Elapsed.TotalMilliseconds;
+            HorizontalCharacterMover.Handle horizontalMover = (HorizontalCharacterMover.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("HorizontalCharacterMover", false);
+            if (horizontalMover == nint.Zero)
+            {
+                throw new Exception("Couldn't find HorizontalCharacterMover for entity");
+            }
 
-            NuVec distance = new NuVec();
-            distance.X = Math.Clamp((transform.X - X) * (Utils.Ticktime / ratio), -2f, 2f);
-            distance.Y = Math.Clamp((transform.Y - Y) * (Utils.Ticktime / ratio), -2f, 2f);
-            distance.Z = Math.Clamp((transform.Z - Z) * (Utils.Ticktime / ratio), -2f, 2f);
+            CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
+            if (characterMoverComponent == nint.Zero)
+            {
+                throw new Exception("Couldn't find CharacterMoverComponent for entity");
+            }
 
-            Console.WriteLine("Distance: {0}", transform.Z - Z);
+            NuVec currentVelocity;
+
+            unsafe
+            {
+                NuVec* currentVelocityPtr = &currentVelocity;
+                characterMoverComponent.GetVelocity((NUVEC.Handle)(nint)currentVelocityPtr);
+            }
+
+            if (Utils.IsBadFloat(currentVelocity.X))
+            {
+                currentVelocity.X = 0;
+            }
+
+            if (Utils.IsBadFloat(currentVelocity.Y))
+            {
+                currentVelocity.Y = 0;
+            }
+
+            if (Utils.IsBadFloat(currentVelocity.Z))
+            {
+                currentVelocity.Z = 0;
+            }
+
+            float ratio = (float)GameUtil.TimeSinceLastFrame.Elapsed.TotalMilliseconds * 0.75f;
+
+            NuVec newVelocity = new NuVec();
+            newVelocity.X = currentVelocity.X + ((transform.X - X) * 1.75f);
+            newVelocity.Y = currentVelocity.Y + ((transform.Y - Y) * 1.75f);
+            newVelocity.Z = currentVelocity.Z + ((transform.Z - Z) * 1.75f);
+
+            Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, currentVelocity.Z, newVelocity.Z);
 
             /*if (Count > 64)
             {
@@ -128,12 +163,6 @@ namespace Networking
 
                 Count = 0;
             }*/
-
-            HorizontalCharacterMover.Handle horizontalMover = (HorizontalCharacterMover.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("HorizontalCharacterMover", false);
-            if (horizontalMover == nint.Zero)
-            {
-                throw new Exception("Couldn't find HorizontalCharacterMover for entity");
-            }
 
             /*CharacterMoverComponent.Handle characterMover = (CharacterMoverComponent.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
             if (characterMover == nint.Zero)
@@ -143,7 +172,7 @@ namespace Networking
 
             unsafe
             {
-                NuVec* distancePtr = &distance;
+                NuVec* distancePtr = &newVelocity;
 
                 horizontalMover.SetMoveLaneVelocity((NuVec3.Handle)(nint)distancePtr);
             }

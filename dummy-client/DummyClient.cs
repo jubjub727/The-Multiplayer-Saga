@@ -176,7 +176,7 @@ namespace dummy_client
         private void MainLoop()
         {
             int count = 0;
-            float speed = HorizontalSpeed / 200;
+            float speed = HorizontalSpeed / 150;
             Stopwatch timeElapsed = new Stopwatch();
             Stopwatch timeSinceJump = new Stopwatch();
             timeSinceJump.Start();
@@ -207,14 +207,14 @@ namespace dummy_client
                         _LocalPlayer.Transform.Z = _LocalPlayer.Transform.Z - HorizontalSpeed;
                     }*/
 
-                    if (timeSinceJump.ElapsedMilliseconds < 1500)//&& GetAsyncKeyState(PAGE_DOWN) != 0)
+                    if (timeSinceJump.ElapsedMilliseconds < 2500)//&& GetAsyncKeyState(PAGE_DOWN) != 0)
                     {
                         _LocalPlayer.Transform.Z -= speed;
                     }
                     else
                     {
                         speed = speed * -1f;
-                        JumpEvent(0.56406253576278687f);
+                        //JumpEvent(0.56406253576278687f);
                         timeSinceJump.Restart();
                     }
 

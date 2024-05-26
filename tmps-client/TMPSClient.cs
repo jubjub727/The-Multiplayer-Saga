@@ -234,6 +234,8 @@ public class TMPSClient
                 {
                     PlayerPool[i].Entity.Delete();
 
+                    PlayerPool[i].Entity = (apiEntity.Handle)nint.Zero;
+
                     PlayerPool[i].PrefabPath = networkedPlayer.PrefabPath;
 
                     PlayerPool[i].Transform = networkedPlayer.Transform;

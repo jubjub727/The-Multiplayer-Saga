@@ -69,6 +69,7 @@ namespace Networking
                 }
                 catch
                 {
+                    Console.WriteLine("Oh no the bad entity bug is back");
                     return;
                 }
             }

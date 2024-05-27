@@ -84,15 +84,15 @@ public class Interpolation
 
             elapsedTime += TimeSinceLastTick.ElapsedTicks;
 
-            var methodX = MathNet.Numerics.Interpolate.Linear(pointsArrayX, valuesArrayX);
-            var methodY = MathNet.Numerics.Interpolate.Linear(pointsArrayY, valuesArrayY);
-            var methodZ = MathNet.Numerics.Interpolate.Linear(pointsArrayZ, valuesArrayZ);
-            var methodRX = MathNet.Numerics.Interpolate.Linear(pointsArrayRX, valuesArrayRX);
-            var methodRY = MathNet.Numerics.Interpolate.Linear(pointsArrayRY, valuesArrayRY);
-            var methodRZ = MathNet.Numerics.Interpolate.Linear(pointsArrayRZ, valuesArrayRZ);
-            var methodVX = MathNet.Numerics.Interpolate.Linear(pointsArrayVX, valuesArrayVX);
-            var methodVY = MathNet.Numerics.Interpolate.Linear(pointsArrayVY, valuesArrayVY);
-            var methodVZ = MathNet.Numerics.Interpolate.Linear(pointsArrayVZ, valuesArrayVZ);
+            var methodX = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(pointsArrayX, valuesArrayX);
+            var methodY = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(pointsArrayY, valuesArrayY);
+            var methodZ = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(pointsArrayZ, valuesArrayZ);
+            var methodRX = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(pointsArrayRX, valuesArrayRX);
+            var methodRY = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(pointsArrayRY, valuesArrayRY);
+            var methodRZ = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(pointsArrayRZ, valuesArrayRZ);
+            var methodVX = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(pointsArrayVX, valuesArrayVX);
+            var methodVY = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(pointsArrayVY, valuesArrayVY);
+            var methodVZ = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(pointsArrayVZ, valuesArrayVZ);
 
             Transform transform = player.Transform;
 

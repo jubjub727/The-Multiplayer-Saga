@@ -12,12 +12,18 @@ public class Interpolation
     double[] pointsArrayRX = new double[Utils.PacketDepth];
     double[] pointsArrayRY = new double[Utils.PacketDepth];
     double[] pointsArrayRZ = new double[Utils.PacketDepth];
+    double[] pointsArrayVX = new double[Utils.PacketDepth];
+    double[] pointsArrayVY = new double[Utils.PacketDepth];
+    double[] pointsArrayVZ = new double[Utils.PacketDepth];
     double[] valuesArrayX = new double[Utils.PacketDepth];
     double[] valuesArrayY = new double[Utils.PacketDepth];
     double[] valuesArrayZ = new double[Utils.PacketDepth];
     double[] valuesArrayRX = new double[Utils.PacketDepth];
     double[] valuesArrayRY = new double[Utils.PacketDepth];
     double[] valuesArrayRZ = new double[Utils.PacketDepth];
+    double[] valuesArrayVX = new double[Utils.PacketDepth];
+    double[] valuesArrayVY = new double[Utils.PacketDepth];
+    double[] valuesArrayVZ = new double[Utils.PacketDepth];
 
     private Stopwatch TimeSinceLastTick;
 
@@ -59,6 +65,9 @@ public class Interpolation
                 pointsArrayRX[count] = globalElapsedTime;
                 pointsArrayRY[count] = globalElapsedTime;
                 pointsArrayRZ[count] = globalElapsedTime;
+                pointsArrayVX[count] = globalElapsedTime;
+                pointsArrayVY[count] = globalElapsedTime;
+                pointsArrayVZ[count] = globalElapsedTime;
 
                 valuesArrayX[count] = (double)previousTransform.Transform.X;
                 valuesArrayY[count] = (double)previousTransform.Transform.Y;
@@ -66,6 +75,9 @@ public class Interpolation
                 valuesArrayRX[count] = (double)previousTransform.Transform.RX;
                 valuesArrayRY[count] = (double)previousTransform.Transform.RY;
                 valuesArrayRZ[count] = (double)previousTransform.Transform.RZ;
+                valuesArrayVX[count] = (double)previousTransform.Transform.VX;
+                valuesArrayVY[count] = (double)previousTransform.Transform.VY;
+                valuesArrayVZ[count] = (double)previousTransform.Transform.VZ;
 
                 count++;
             }
@@ -78,6 +90,9 @@ public class Interpolation
             var methodRX = MathNet.Numerics.Interpolate.Linear(pointsArrayRX, valuesArrayRX);
             var methodRY = MathNet.Numerics.Interpolate.Linear(pointsArrayRY, valuesArrayRY);
             var methodRZ = MathNet.Numerics.Interpolate.Linear(pointsArrayRZ, valuesArrayRZ);
+            var methodVX = MathNet.Numerics.Interpolate.Linear(pointsArrayVX, valuesArrayVX);
+            var methodVY = MathNet.Numerics.Interpolate.Linear(pointsArrayVY, valuesArrayVY);
+            var methodVZ = MathNet.Numerics.Interpolate.Linear(pointsArrayVZ, valuesArrayVZ);
 
             Transform transform = player.Transform;
 
@@ -87,6 +102,9 @@ public class Interpolation
             transform.RX = (float)methodRX.Interpolate(elapsedTime);
             transform.RY = (float)methodRY.Interpolate(elapsedTime);
             transform.RZ = (float)methodRZ.Interpolate(elapsedTime);
+            transform.VX = (float)methodVX.Interpolate(elapsedTime);
+            transform.VY = (float)methodVY.Interpolate(elapsedTime);
+            transform.VZ = (float)methodVZ.Interpolate(elapsedTime);
 
             if (transform.IsBadTransform())
             {

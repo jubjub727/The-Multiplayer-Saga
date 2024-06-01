@@ -60,7 +60,7 @@ namespace tmpsserver
 
                 foreach (Connection connection in RiptideServer.Clients)
                 {
-                    NetworkedPlayer player = FindPlayer(connection.Id);
+                    NetworkedPlayer? player = FindPlayer(connection.Id);
                     if (player != null)
                     {
                         Console.Write("{0} - {1} | ", player.Name, connection.RTT);

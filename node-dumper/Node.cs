@@ -85,7 +85,7 @@ public class Node
         return new BigInteger(guidPart2) << 64 | new BigInteger(guidPart1);
     }
 
-    private Node FindChild(BigInteger guid)
+    private Node? FindChild(BigInteger guid)
     {
         foreach (Node child in Children)
         {
@@ -128,7 +128,7 @@ public class Node
         apiComponent.Handle nextComponent = node.Component.NextSibling();
         if (nextComponent != nint.Zero)
         {
-            Node child = FindChild(GetGuid(nextComponent));
+            Node? child = FindChild(GetGuid(nextComponent));
 
             if (child == null)
             {
@@ -150,7 +150,7 @@ public class Node
         apiComponent.Handle prevComponent = node.Component.PrevSibling();
         if (prevComponent != nint.Zero)
         {
-            Node child = FindChild(GetGuid(prevComponent));
+            Node? child = FindChild(GetGuid(prevComponent));
 
             if (child == null)
             {

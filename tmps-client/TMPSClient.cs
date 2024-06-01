@@ -53,8 +53,6 @@ public class TMPSClient
 
         RiptideLogger.Log(LogType.Info, "TMPS", "Finished setting up hooks");
 
-        Interpolation = new Interpolation(TimeSinceLastTick);
-
         Serialization.LoadAvailableTypes();
 
         RiptideLogger.Log(LogType.Info, "TMPS", "Finished loading types");
@@ -405,6 +403,8 @@ public class TMPSClient
     {
         RiptideLogger.Initialize(Console.WriteLine, true);
         RiptideClient = new Client();
+
+        Interpolation = new Interpolation(TimeSinceLastTick);
 
         Startup();
     }

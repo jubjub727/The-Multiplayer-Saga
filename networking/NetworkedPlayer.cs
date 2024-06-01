@@ -147,7 +147,7 @@ namespace Networking
             newVelocity.Y = transform.VY + (transform.Y - Y);
             newVelocity.Z = transform.VZ + (transform.Z - Z);
 
-            Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, transform.VZ, newVelocity.Z);
+            //Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, transform.VZ, newVelocity.Z);
 
             /*if (Count > 64)
             {

@@ -67,14 +67,15 @@ namespace tmpsserver
                     }
                 }
 
-                Console.Write("Execution Time: {0}ms                               ", timeElapsed.ElapsedTicks / TimeSpan.TicksPerMillisecond);
-
-                Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
-
                 while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 15625)) // 15625 = 64 tick
                 {
                     continue;
                 }
+
+                Console.Write("Execution Time: {0}ms                               ", timeElapsed.ElapsedTicks / TimeSpan.TicksPerMillisecond);
+
+                Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
+
                 timeElapsed.Stop();
                 timeElapsed.Reset();
             }

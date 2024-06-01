@@ -82,6 +82,16 @@ namespace Networking
             }
         }
 
+        public void WriteDouble(double num)
+        {
+            Byte[] bytes = BitConverter.GetBytes(num);
+            foreach (Byte value in bytes)
+            {
+                data[writeHead] = value;
+                writeHead++;
+            }
+        }
+
         public void WriteBool(bool boolVal)
         {
             Byte[] bytes = BitConverter.GetBytes(boolVal);
@@ -147,6 +157,14 @@ namespace Networking
         {
             float value = BitConverter.ToSingle(data, readHead);
             readHead += sizeof(float);
+
+            return value;
+        }
+
+        public double ReadDouble()
+        {
+            double value = BitConverter.ToDouble(data, readHead);
+            readHead += sizeof(double);
 
             return value;
         }

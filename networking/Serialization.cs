@@ -59,6 +59,8 @@ namespace Networking
             {
                 case TypeCode.Single:
                     return packet.ReadFloat();
+                case TypeCode.Double:
+                    return packet.ReadDouble();
                 case TypeCode.Int32:
                     return packet.ReadInt32();
                 case TypeCode.UInt32:
@@ -91,6 +93,14 @@ namespace Networking
                         throw new Exception("Received Null Value for Field (" + field.Name + ")");
                     }
                     packet.WriteFloat(floatValue.Value);
+                    return;
+                case TypeCode.Double:
+                    double? doubleValue = (double?)field.GetValue(data);
+                    if (doubleValue == null)
+                    {
+                        throw new Exception("Received Null Value for Field (" + field.Name + ")");
+                    }
+                    packet.WriteDouble(doubleValue.Value);
                     return;
                 case TypeCode.Int32:
                     Int32? int32Value = (Int32?)field.GetValue(data);

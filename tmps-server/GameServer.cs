@@ -64,6 +64,8 @@ namespace tmpsserver
                     continue;
                 }
 
+                double executionTime = timeElapsed.ElapsedTicks / TimeSpan.TicksPerMillisecond;
+
                 var cursorPos = Console.GetCursorPosition();
                 Console.Write("| ");
 
@@ -76,7 +78,7 @@ namespace tmpsserver
                     }
                 }
 
-                Console.Write("Execution Time: {0}ms                               ", timeElapsed.ElapsedTicks / TimeSpan.TicksPerMillisecond);
+                Console.Write("Execution Time: {0}ms                               ", executionTime);
 
                 Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
 

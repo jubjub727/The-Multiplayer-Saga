@@ -178,14 +178,17 @@ namespace dummy_client
             int count = 0;
             float speed = HorizontalSpeed / 100;
             bool stormtrooper = true;
-            Stopwatch timeElapsed = new Stopwatch();
+            Stopwatch timeElapsed = Stopwatch.StartNew();
             Stopwatch timeSinceJump = Stopwatch.StartNew();
 
             Stopwatch timeSinceChange = Stopwatch.StartNew();
 
             while (true)
             {
-                timeElapsed.Start();
+                while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 4166))
+                {
+                    continue;
+                }
 
                 if (_FirstConnect)
                 {
@@ -246,12 +249,7 @@ namespace dummy_client
 
                 OnUpdate();
 
-                while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 4166))
-                {
-                    continue;
-                }
-                timeElapsed.Stop();
-                timeElapsed.Reset();
+                timeElapsed.Restart();
 
                 count++;
             }

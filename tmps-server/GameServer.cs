@@ -42,7 +42,7 @@ namespace tmpsserver
 
         private void MainLoop()
         {
-            Stopwatch timeElapsed = new Stopwatch();
+            Stopwatch timeElapsed = Stopwatch.StartNew();
 
             Thread typeLoadingThread = new Thread(LoadTypes);
             typeLoadingThread.Start();
@@ -51,7 +51,10 @@ namespace tmpsserver
 
             while (true)
             {
-                timeElapsed.Start();
+                while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 15625)) // 15625 = 64 tick
+                {
+                    continue;
+                }
 
                 RunTick();
 
@@ -67,17 +70,11 @@ namespace tmpsserver
                     }
                 }
 
-                while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 15625)) // 15625 = 64 tick
-                {
-                    continue;
-                }
-
                 Console.Write("Execution Time: {0}ms                               ", timeElapsed.ElapsedTicks / TimeSpan.TicksPerMillisecond);
 
                 Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
 
-                timeElapsed.Stop();
-                timeElapsed.Reset();
+                timeElapsed.Restart();
             }
         }
 

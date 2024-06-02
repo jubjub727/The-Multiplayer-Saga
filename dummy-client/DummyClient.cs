@@ -193,10 +193,12 @@ namespace dummy_client
                     ranFrame = true;
                 }
 
-                while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 4166))
+                if (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 4166))
                 {
                     continue;
                 }
+
+                double executionTime = (double)timeElapsed.ElapsedTicks / (double)TimeSpan.TicksPerMillisecond;
 
                 if (_FirstConnect)
                 {
@@ -248,9 +250,11 @@ namespace dummy_client
                         timeSinceChange.Restart();
                     }
 
-                    if (count > 240)
+                    if (count > 120)
                     {
-                        Console.WriteLine("X - {0}, Y - {1}, Z - {2}", _LocalPlayer.Transform.X, _LocalPlayer.Transform.Y, _LocalPlayer.Transform.Z);
+                        var cursorPos = Console.GetCursorPosition();
+                        Console.WriteLine("X - {0}, Y - {1}, Z - {2} | Execution Time - {3}ms                   ", _LocalPlayer.Transform.X, _LocalPlayer.Transform.Y, _LocalPlayer.Transform.Z, executionTime);
+                        Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
                         count = 0;
                     }
                 }

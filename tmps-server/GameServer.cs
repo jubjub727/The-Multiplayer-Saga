@@ -49,14 +49,20 @@ namespace tmpsserver
 
             Startup();
 
+            bool ranTick = false;
+
             while (true)
             {
+                if (!ranTick)
+                {
+                    RunTick();
+                    ranTick = true;
+                }
+
                 while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 15625)) // 15625 = 64 tick
                 {
                     continue;
                 }
-
-                RunTick();
 
                 var cursorPos = Console.GetCursorPosition();
                 Console.Write("| ");
@@ -73,6 +79,8 @@ namespace tmpsserver
                 Console.Write("Execution Time: {0}ms                               ", timeElapsed.ElapsedTicks / TimeSpan.TicksPerMillisecond);
 
                 Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
+
+                ranTick = false;
 
                 timeElapsed.Restart();
             }

@@ -183,8 +183,16 @@ namespace dummy_client
 
             Stopwatch timeSinceChange = Stopwatch.StartNew();
 
+            bool ranFrame = false;
+
             while (true)
             {
+                if (!ranFrame)
+                {
+                    OnUpdate();
+                    ranFrame = true;
+                }
+
                 while (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 4166))
                 {
                     continue;
@@ -247,7 +255,7 @@ namespace dummy_client
                     }
                 }
 
-                OnUpdate();
+                ranFrame = false;
 
                 timeElapsed.Restart();
 

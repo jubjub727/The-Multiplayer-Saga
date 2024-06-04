@@ -142,10 +142,15 @@ namespace Networking
 
             //float ratio = (float)GameUtil.TimeSinceLastFrame.Elapsed.TotalMilliseconds * 0.75f;
 
-            NuVec newVelocity = new NuVec();
+            /*NuVec newVelocity = new NuVec();
             newVelocity.X = transform.VX + (transform.X - X);
             newVelocity.Y = transform.VY + (transform.Y - Y);
-            newVelocity.Z = transform.VZ + (transform.Z - Z);
+            newVelocity.Z = transform.VZ + (transform.Z - Z);*/
+
+            NuVec newVelocity = new NuVec();
+            newVelocity.X = (transform.X - X) * Utils.Tickrate / 4;
+            newVelocity.Y = (transform.Y - Y) * Utils.Tickrate / 4;
+            newVelocity.Z = (transform.Z - Z) * Utils.Tickrate / 4;
 
             //Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, transform.VZ, newVelocity.Z);
 

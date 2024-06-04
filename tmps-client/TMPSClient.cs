@@ -39,6 +39,8 @@ public class TMPSClient
 
     private Stopwatch TimeSinceLastTick = new Stopwatch();
 
+    private PerfTimer PerfTimer = new PerfTimer();
+
     private UInt64 CurrentTick = 0;
 
     private bool _FirstConnect = false;
@@ -192,7 +194,11 @@ public class TMPSClient
     {
         if (CheckIfReady() == false) return;
 
+        PerfTimer.Start();
+
         GameUtil.StartProcessingScopes();
+
+        double StartProcessingScopesTime = PerfTimer.Collect();
 
         if (!_RiptideConnected)
         {
@@ -205,11 +211,17 @@ public class TMPSClient
             TimeSinceLastTick.Start();
         }
 
+        double? ConsumeTasksTime = null;
+        double? CopyTransformToNetworkedPlayerTime = null;
+
         if (_FirstConnect == true && PlayerEntityReady())
         {
+            PerfTimer.Start();
             CharacterSpawnManager.ConsumeTasks();
+            ConsumeTasksTime = PerfTimer.Collect();
 
             CopyTransformToNetworkedPlayer();
+            CopyTransformToNetworkedPlayerTime = PerfTimer.Collect();
         }
 
         if (RiptideClient.IsConnected && _FirstConnect == false)
@@ -220,11 +232,25 @@ public class TMPSClient
             _FirstConnect = true;
         }
 
+        PerfTimer.Start();
+
         RiptideClient.Update();
+
+        double UpdateTime = PerfTimer.Collect();
 
         Interpolation.Interpolate(PlayerPool);
 
+        double InterpolationTime = PerfTimer.Collect();
+
         GameUtil.StopProcessingScopes();
+
+        double StopProcessingScopesTime = PerfTimer.Collect();
+
+        var cursorPos = Console.GetCursorPosition();
+
+        Console.Write("StartProcessingScopes({0}) - StopProcessingScopesTime({1}) - ConsumeTasksTime({2}) - CopyTransformTime({3}) - UpdateTime({4}) - InterpolationTime({5})", StopProcessingScopesTime, StopProcessingScopesTime, ConsumeTasksTime, CopyTransformToNetworkedPlayerTime, UpdateTime, InterpolationTime);
+
+        Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
 
         GameUtil.TimeSinceLastFrame.Restart();
     }

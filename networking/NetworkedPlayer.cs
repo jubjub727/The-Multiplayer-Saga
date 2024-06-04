@@ -27,6 +27,54 @@ namespace Networking
         public List<PreviousTransform> PreviousTransforms = new List<PreviousTransform>();
 
         [NotNetworked]
+        private apiTransformComponent.Handle _apiTransformComponent = (apiTransformComponent.Handle)nint.Zero;
+
+        [NotNetworked]
+        public apiTransformComponent.Handle apiTransformComponent
+        {
+            get
+            {
+                if (_apiTransformComponent != nint.Zero)
+                {
+                    return _apiTransformComponent;
+                }
+                else
+                {
+                    _apiTransformComponent = (apiTransformComponent.Handle)(nint)Entity.FindComponentByTypeName("apiTransformComponent");
+                    if (_apiTransformComponent == nint.Zero)
+                    {
+                        throw new Exception("Could not find apiTransformComponent");
+                    }
+                    return _apiTransformComponent;
+                }
+            }
+        }
+
+        [NotNetworked]
+        private CharacterMoverComponent.Handle _CharacterMoverComponent = (CharacterMoverComponent.Handle)nint.Zero;
+
+        [NotNetworked]
+        public CharacterMoverComponent.Handle CharacterMoverComponent
+        {
+            get
+            {
+                if (_CharacterMoverComponent != nint.Zero)
+                {
+                    return _CharacterMoverComponent;
+                }
+                else
+                {
+                    _CharacterMoverComponent = (CharacterMoverComponent.Handle)(nint)Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
+                    if (_CharacterMoverComponent == nint.Zero)
+                    {
+                        throw new Exception("Could not find CharacterMoverComponent");
+                    }
+                    return _CharacterMoverComponent;
+                }
+            }
+        }
+
+        [NotNetworked]
         private apiEntity.Handle _Entity = (apiEntity.Handle)nint.Zero;
 
         [NotNetworked]

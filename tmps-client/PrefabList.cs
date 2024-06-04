@@ -8,6 +8,9 @@ namespace tmpsclient
 {
     public class PrefabList
     {
+        private List<string> CachedNames = new List<string>();
+        private List<string> CachedPrefabs = new List<string>();
+
         private Dictionary<string, string> Characters = new Dictionary<string, string>();
 
         private string[] Prefabs;
@@ -19,15 +22,58 @@ namespace tmpsclient
             return name.Split('.')[0];
         }
 
+        private string? GetCachedPrefabName(string characterName)
+        {
+            for (int i = 0; i < CachedNames.Count; i++)
+            {
+                if (CachedNames[i] == characterName)
+                {
+                    return CachedPrefabs[i];
+                }
+            }
+
+            return null;
+        }
+
         public string GetPrefabFromCharacterName(string characterName)
         {
-            if (Characters.ContainsKey(characterName))
+            string? cachedName = GetCachedPrefabName(characterName);
+            if (cachedName == null)
             {
-                return Characters[characterName];
+                if (Characters.ContainsKey(characterName))
+                {
+                    string prefabName = Characters[characterName];
+
+                    CachedNames.Add(characterName);
+                    CachedPrefabs.Add(prefabName);
+
+                    if (CachedNames.Count > 10)
+                    {
+                        CachedNames.RemoveAt(0);
+                        CachedPrefabs.RemoveAt(0);
+                    }
+
+                    return prefabName;
+                }
+                else
+                {
+                    string prefabName = "Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked";
+
+                    CachedNames.Add(characterName);
+                    CachedPrefabs.Add(prefabName);
+
+                    if (CachedNames.Count > 10)
+                    {
+                        CachedNames.RemoveAt(0);
+                        CachedPrefabs.RemoveAt(0);
+                    }
+
+                    return prefabName;
+                }
             }
             else
             {
-                return "Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked";
+                return cachedName;
             }
         }
 

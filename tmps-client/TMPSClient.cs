@@ -39,6 +39,8 @@ public class TMPSClient
 
     private Stopwatch TimeSinceLastTick = new Stopwatch();
 
+    private Stopwatch TimeSinceFrameStarted = new Stopwatch();
+
     private PerfTimer PerfTimer = new PerfTimer();
 
     private UInt64 CurrentTick = 0;
@@ -48,6 +50,8 @@ public class TMPSClient
     private bool _RiptideConnected = false;
 
     private bool _ReadyToConnect = false;
+
+    private bool _EntityReady = false;
 
     private void Startup()
     {
@@ -122,7 +126,7 @@ public class TMPSClient
 
     private void CopyTransformToNetworkedPlayer()
     {
-        apiTransformComponent.Handle transformComponent = (apiTransformComponent.Handle)(nint)_LocalPlayer.Entity.FindComponentByTypeName("apiTransformComponent");
+        /*apiTransformComponent.Handle transformComponent = (apiTransformComponent.Handle)(nint)_LocalPlayer.Entity.FindComponentByTypeName("apiTransformComponent");
         if (transformComponent == nint.Zero)
         {
             throw new Exception("Couldn't find Transform for LocalPlayer");
@@ -131,7 +135,7 @@ public class TMPSClient
         transformComponent.GetPosition(out _LocalPlayer.Transform.X, out _LocalPlayer.Transform.Y, out _LocalPlayer.Transform.Z);
         transformComponent.GetRotation(out _LocalPlayer.Transform.RX, out _LocalPlayer.Transform.RY, out _LocalPlayer.Transform.RZ);
 
-        CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)_LocalPlayer.Entity.FindComponentByTypeNameRecursive("characterMoverComponent", false);
+        CharacterMoverComponent.Handle characterMoverComponent = (CharacterMoverComponent.Handle)(nint)_LocalPlayer.Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
         if (characterMoverComponent == nint.Zero)
         {
             throw new Exception("Couldn't find CharacterMoverComponent for LocalPlayer");
@@ -143,6 +147,17 @@ public class TMPSClient
         {
             NuVec* currentVelocityPtr = &currentVelocity;
             characterMoverComponent.GetVelocity((NUVEC.Handle)(nint)currentVelocityPtr);
+        }*/
+
+        _LocalPlayer.apiTransformComponent.GetPosition(out _LocalPlayer.Transform.X, out _LocalPlayer.Transform.Y, out _LocalPlayer.Transform.Z);
+        _LocalPlayer.apiTransformComponent.GetRotation(out _LocalPlayer.Transform.RX, out _LocalPlayer.Transform.RY, out _LocalPlayer.Transform.RZ);
+
+        NuVec currentVelocity;
+
+        unsafe
+        {
+            NuVec* currentVelocityPtr = &currentVelocity;
+            _LocalPlayer.CharacterMoverComponent.GetVelocity((NUVEC.Handle)(nint)currentVelocityPtr);
         }
 
         _LocalPlayer.Transform.VX = currentVelocity.X;
@@ -167,15 +182,31 @@ public class TMPSClient
 
     private bool PlayerEntityReady()
     {
-        try
+        if (_EntityReady)
         {
-            apiEntity.Handle entity = _LocalPlayer.Entity;
-            return entity != nint.Zero;
+            return true;
         }
-        catch
+        else
         {
-            return false;
+            try
+            {
+                bool ready = _LocalPlayer.Entity != nint.Zero;
+                if (ready)
+                {
+                    _EntityReady = true;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
+
     }
 
     private void ProcessActions()
@@ -194,11 +225,11 @@ public class TMPSClient
     {
         if (CheckIfReady() == false) return;
 
-        PerfTimer.Start();
+        double GameTimeSinceLastFrame = TimeSinceLastFrame.Elapsed.TotalMicroseconds;
+
+        TimeSinceFrameStarted.Restart();
 
         GameUtil.StartProcessingScopes();
-
-        double StartProcessingScopesTime = PerfTimer.Collect();
 
         if (!_RiptideConnected)
         {
@@ -211,17 +242,11 @@ public class TMPSClient
             TimeSinceLastTick.Start();
         }
 
-        double? ConsumeTasksTime = null;
-        double? CopyTransformToNetworkedPlayerTime = null;
-
         if (_FirstConnect == true && PlayerEntityReady())
         {
-            PerfTimer.Start();
             CharacterSpawnManager.ConsumeTasks();
-            ConsumeTasksTime = PerfTimer.Collect();
 
             CopyTransformToNetworkedPlayer();
-            CopyTransformToNetworkedPlayerTime = PerfTimer.Collect();
         }
 
         if (RiptideClient.IsConnected && _FirstConnect == false)
@@ -232,23 +257,25 @@ public class TMPSClient
             _FirstConnect = true;
         }
 
-        PerfTimer.Start();
-
         RiptideClient.Update();
-
-        double UpdateTime = PerfTimer.Collect();
 
         Interpolation.Interpolate(PlayerPool);
 
-        double InterpolationTime = PerfTimer.Collect();
-
         GameUtil.StopProcessingScopes();
 
-        double StopProcessingScopesTime = PerfTimer.Collect();
+        double MyFrameTime = TimeSinceFrameStarted.Elapsed.TotalMicroseconds;
+        double TotalFrameTime = MyFrameTime + GameTimeSinceLastFrame;
 
         var cursorPos = Console.GetCursorPosition();
 
-        Console.Write("StartProcessingScopes({0}) - StopProcessingScopesTime({1}) - ConsumeTasksTime({2}) - CopyTransformTime({3}) - UpdateTime({4}) - InterpolationTime({5})", StopProcessingScopesTime, StopProcessingScopesTime, ConsumeTasksTime, CopyTransformToNetworkedPlayerTime, UpdateTime, InterpolationTime);
+        Console.Write("\n");
+
+        foreach (KeyValuePair<string, double> time in PerfTimer.Times)
+        {
+            Console.Write("{0}({1})                                                        \n", time.Key, time.Value);
+        }
+
+        Console.Write("Frame Time - {0} | Game Frame Time - {1} | My Frame Time - {2}                           \n", TotalFrameTime, GameTimeSinceLastFrame, MyFrameTime);
 
         Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
 
@@ -336,6 +363,7 @@ public class TMPSClient
         ProcessActions();
 
         TickReply();
+
         TimeSinceLastTick.Restart();
     }
 
@@ -396,10 +424,6 @@ public class TMPSClient
                 break;
             default:
                 break;
-        }
-        if (messageReceivedArgs.MessageId == Utils.SERVER_TICK_MESSAGE_ID)
-        {
-
         }
     }
 

@@ -25,7 +25,7 @@ public class TestMod : IDisposable
 
     private PlayerControlSystem.Handle playerControlSystemHandle;
 
-    NativeFuncHook<DoubleJumpContext.OnEnterMethod.Delegate>? doubleJumpContextOnEnterMethodHook;
+    private NativeFuncHook<DoubleJumpContext.OnEnterMethod.Delegate>? doubleJumpContextOnEnterMethodHook;
 
     void DoCoolStuff(DoubleJumpContext.Handle handle)
     {

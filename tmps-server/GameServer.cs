@@ -16,6 +16,8 @@ namespace tmpsserver
 
         private UInt64 TickCount = 0;
 
+        private const UInt32 TimingTicksPerSecond = (UInt32)TimeSpan.TicksPerSecond;
+        private const UInt32 TimingTicksPerGameTick = TimingTicksPerSecond / Utils.Tickrate;
 
         private void Startup()
         {
@@ -59,7 +61,7 @@ namespace tmpsserver
                     ranTick = true;
                 }
 
-                if (timeElapsed.ElapsedTicks < (TimeSpan.TicksPerMicrosecond * 15625)) // 15625 = 64 tick
+                if (timeElapsed.ElapsedTicks < TimingTicksPerGameTick)
                 {
                     continue;
                 }

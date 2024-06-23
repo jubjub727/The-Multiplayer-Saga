@@ -13,7 +13,7 @@ namespace NodeDumper;
 public class Node
 {
     [JsonIgnore]
-    public static apiEntity.Handle rootNode;
+    public static apiEntity.Handle RootNode;
 
     [JsonIgnore]
     public Node Parent;
@@ -30,12 +30,15 @@ public class Node
     public BigInteger Guid;
 
     [JsonIgnore]
-    private int IterationCount = 0;
+    private int RecursionIterations = 0;
 
     [JsonIgnore]
     private const int GuidOffset = 0x46;
     [JsonIgnore]
     private const int Sizeof64Int = 0x8;
+
+    [JsonIgnore]
+    private const int MaxRecursions = 1000;
 
     public Node(Node parent)
     {
@@ -48,7 +51,7 @@ public class Node
         Children = new List<Node>();
         Entity = entity;
         Component = (apiComponent.Handle)(nint)entity;
-        rootNode = entity;
+        RootNode = entity;
         Label = Entity.GetLabel();
     }
 
@@ -118,13 +121,25 @@ public class Node
         return child;
     }
 
+    // This code is important because here be dragons of the stackoverflow kind
+    private bool IsHeadingTowardsStackOverflow() 
+    {
+        RecursionIterations++;
+        if (RecursionIterations > MaxRecursions)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void IterateForwards(Node node)
     {
-        IterationCount++;
-        if (IterationCount > 1000)
+        if (IsHeadingTowardsStackOverflow())
         {
-            return;
+            return; // Let's dip from this party
         }
+
         apiComponent.Handle nextComponent = node.Component.NextSibling();
         if (nextComponent != nint.Zero)
         {
@@ -142,11 +157,11 @@ public class Node
 
     private void IterateBackwards(Node node)
     {
-        IterationCount++;
-        if (IterationCount > 1000)
+        if (IsHeadingTowardsStackOverflow())
         {
-            return;
+            return; // Let's dip from this party
         }
+
         apiComponent.Handle prevComponent = node.Component.PrevSibling();
         if (prevComponent != nint.Zero)
         {
@@ -164,9 +179,10 @@ public class Node
 
     public void FindAllSiblings()
     {
-        IterationCount = 0;
+        RecursionIterations = 0;
         IterateForwards(this);
-        IterationCount = 0;
+
+        RecursionIterations = 0;
         IterateBackwards(this);
     }
 
@@ -176,9 +192,11 @@ public class Node
         {
             return;
         }
-        IterationCount = 0;
+
+        RecursionIterations = 0;
         IterateForwards((Node)Children[0]);
-        IterationCount = 0;
+
+        RecursionIterations = 0;
         IterateBackwards((Node)Children[0]);
     }
 

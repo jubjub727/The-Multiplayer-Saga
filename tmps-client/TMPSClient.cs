@@ -53,6 +53,8 @@ public class TMPSClient
 
     private bool _EntityReady = false;
 
+    private string _CurrentCharacter = "";
+
     private void Startup()
     {
         SetupHooks();
@@ -164,7 +166,12 @@ public class TMPSClient
         _LocalPlayer.Transform.VY = currentVelocity.Y;
         _LocalPlayer.Transform.VZ = currentVelocity.Z;
 
-        _LocalPlayer.PrefabPath = PrefabList.GetPrefabFromCharacterName(_LocalPlayer.Entity.GetName());
+        string entityName = _LocalPlayer.Entity.GetName();
+        if (entityName != _CurrentCharacter)
+        {
+            _LocalPlayer.PrefabPath = PrefabList.GetPrefabFromCharacterName(_LocalPlayer.Entity.GetName());
+            _CurrentCharacter = entityName;
+        }
 
         //_LocalPlayer.Transform.SnapToGroundOn = characterMoverComponent.get_SnapToGroundOn();
     }

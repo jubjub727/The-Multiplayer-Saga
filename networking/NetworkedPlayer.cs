@@ -2,6 +2,7 @@
 using gameutil;
 using static gameutil.GameUtil;
 using static OMP.LSWTSS.CApi1.CommonEvents.Interaction.Data;
+using System.Diagnostics;
 
 namespace Networking
 {
@@ -19,6 +20,12 @@ namespace Networking
         public Transform Transform;
         public string Name = "";
         public string PrefabPath = "Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked";
+
+        [NotNetworked]
+        public PID PidLoop;
+
+        [NotNetworked]
+        public Stopwatch TimeSinceLastApply = Stopwatch.StartNew();
 
         [NotNetworked]
         public bool IsLocal = false;
@@ -132,17 +139,20 @@ namespace Networking
             PlayerId = playerId;
             Name = name;
             Transform = new Transform();
+            PidLoop = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
         }
 
         public NetworkedPlayer(UInt16 playerId)
         {
             PlayerId = playerId;
             Transform = new Transform();
+            PidLoop = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
         }
 
         public NetworkedPlayer()
         {
             Transform = new Transform();
+            PidLoop = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
         }
         public void ApplyTransform(Transform transform)
         {
@@ -195,10 +205,18 @@ namespace Networking
             newVelocity.Y = transform.VY + (transform.Y - Y);
             newVelocity.Z = transform.VZ + (transform.Z - Z);*/
 
+            TimeSinceLastApply.Stop();
+
+            double newX = PidLoop.PID_iterate(transform.X, X, TimeSinceLastApply.Elapsed);
+            double newY = PidLoop.PID_iterate(transform.Y, Y, TimeSinceLastApply.Elapsed);
+            double newZ = PidLoop.PID_iterate(transform.Z, Z, TimeSinceLastApply.Elapsed);
+
+            TimeSinceLastApply.Restart();
+
             NuVec newVelocity = new NuVec();
-            newVelocity.X = (transform.X - X) * Utils.Tickrate / 4;
-            newVelocity.Y = (transform.Y - Y) * Utils.Tickrate / 4;
-            newVelocity.Z = (transform.Z - Z) * Utils.Tickrate / 4;
+            newVelocity.X = (float)newX;
+            newVelocity.Y = (float)newY;
+            newVelocity.Z = (float)newZ;
 
             //Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, transform.VZ, newVelocity.Z);
 

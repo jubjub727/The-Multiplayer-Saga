@@ -47,7 +47,7 @@ namespace tmpsclient
                     CachedNames.Add(characterName);
                     CachedPrefabs.Add(prefabName);
 
-                    if (CachedNames.Count > 10)
+                    if (CachedNames.Count > 32)
                     {
                         CachedNames.RemoveAt(0);
                         CachedPrefabs.RemoveAt(0);

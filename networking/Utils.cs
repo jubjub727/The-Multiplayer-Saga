@@ -20,12 +20,12 @@
         public const int PacketDepth = 24;
         public const int PacketOffset = 16;
 
-        public const double P = 1;
-        public const double I = 1;
-        public const double D = 0.1;
+        public const double P = 4;
+        public const double I = 0;
+        public const double D = 0;
         public const double N = 1;
-        public const double OutputUpperLimit = 2.5;
-        public const double OutputLowerLimit = -2.5;
+        public const double OutputUpperLimit = 3.5;
+        public const double OutputLowerLimit = -3.5;
 
 
         public static bool IsBadFloat(float x)

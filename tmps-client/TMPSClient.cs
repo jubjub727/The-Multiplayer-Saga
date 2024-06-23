@@ -273,7 +273,7 @@ public class TMPSClient
         double MyFrameTime = TimeSinceFrameStarted.Elapsed.TotalMicroseconds;
         double TotalFrameTime = MyFrameTime + GameTimeSinceLastFrame;
 
-        var cursorPos = Console.GetCursorPosition();
+        /*var cursorPos = Console.GetCursorPosition();
 
         Console.Write("\n");
 
@@ -284,7 +284,7 @@ public class TMPSClient
 
         Console.Write("Frame Time - {0} | Game Frame Time - {1} | My Frame Time - {2}                           \n", TotalFrameTime, GameTimeSinceLastFrame, MyFrameTime);
 
-        Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);
+        Console.SetCursorPosition(cursorPos.Left, cursorPos.Top);*/
 
         GameUtil.TimeSinceLastFrame.Restart();
     }

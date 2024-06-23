@@ -22,7 +22,13 @@ namespace Networking
         public string PrefabPath = "Chars/Minifig/Stormtrooper/Stormtrooper.prefab_baked";
 
         [NotNetworked]
-        public PID PidLoop;
+        public PID PidX;
+
+        [NotNetworked]
+        public PID PidY;
+
+        [NotNetworked]
+        public PID PidZ;
 
         [NotNetworked]
         public Stopwatch TimeSinceLastApply = Stopwatch.StartNew();
@@ -139,20 +145,26 @@ namespace Networking
             PlayerId = playerId;
             Name = name;
             Transform = new Transform();
-            PidLoop = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
+            PidX = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
+            PidY = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
+            PidZ = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
         }
 
         public NetworkedPlayer(UInt16 playerId)
         {
             PlayerId = playerId;
             Transform = new Transform();
-            PidLoop = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
+            PidX = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
+            PidY = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
+            PidZ = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
         }
 
         public NetworkedPlayer()
         {
             Transform = new Transform();
-            PidLoop = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
+            PidX = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
+            PidY = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
+            PidZ = new PID(Utils.P, Utils.I, Utils.D, Utils.N, Utils.OutputUpperLimit, Utils.OutputLowerLimit);
         }
         public void ApplyTransform(Transform transform)
         {
@@ -170,6 +182,8 @@ namespace Networking
 
             currentTransform.GetPosition(out X, out Y, out Z);
             currentTransform.SetRotation(transform.RX, transform.RY, transform.RZ);
+
+            Console.WriteLine("Pos X - {0} | Pos Y - {1} | - Pos Z - {2}", X, Y, Z);
 
             HorizontalCharacterMover.Handle horizontalMover = (HorizontalCharacterMover.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("HorizontalCharacterMover", false);
             if (horizontalMover == nint.Zero)
@@ -198,49 +212,47 @@ namespace Networking
                 transform.VZ = 0;
             }
 
-            //float ratio = (float)GameUtil.TimeSinceLastFrame.Elapsed.TotalMilliseconds * 0.75f;
-
             /*NuVec newVelocity = new NuVec();
             newVelocity.X = transform.VX + (transform.X - X);
             newVelocity.Y = transform.VY + (transform.Y - Y);
             newVelocity.Z = transform.VZ + (transform.Z - Z);*/
 
-            TimeSinceLastApply.Stop();
+            float deltaX = transform.X - X;
+            float deltaY = transform.Y - Y;
+            float deltaZ = transform.Z - Z;
 
-            double newX = PidLoop.PID_iterate(transform.X, X, TimeSinceLastApply.Elapsed);
-            double newY = PidLoop.PID_iterate(transform.Y, Y, TimeSinceLastApply.Elapsed);
-            double newZ = PidLoop.PID_iterate(transform.Z, Z, TimeSinceLastApply.Elapsed);
-
-            TimeSinceLastApply.Restart();
-
-            NuVec newVelocity = new NuVec();
-            newVelocity.X = (float)newX;
-            newVelocity.Y = (float)newY;
-            newVelocity.Z = (float)newZ;
-
-            //Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, transform.VZ, newVelocity.Z);
-
-            /*if (Count > 64)
+            if ((deltaX > 3f || deltaX < -3f) || (deltaY > 3f || deltaY < -3f) || (deltaZ > 3f || deltaZ < -3f))
             {
-                Console.WriteLine("{3} Distance:X - {0}, Y - {1}, Z - {2} | Current Position: X - {4}, Y - {5}, Z - {6} | Desired Position: X - {7}, Y - {8}, Z - {9}", distance.Z, distance.Y, distance.Z, Name, X, Y, Z, transform.X, transform.Y, transform.Z);
-
-                Count = 0;
-            }*/
-
-            /*CharacterMoverComponent.Handle characterMover = (CharacterMoverComponent.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("CharacterMoverComponent", false);
-            if (characterMover == nint.Zero)
-            {
-                throw new Exception("Couldn't find CharacterMoverComponent for entity");
-            }*/
-
-            unsafe
-            {
-                NuVec* distancePtr = &newVelocity;
-
-                horizontalMover.SetMoveLaneVelocity((NuVec3.Handle)(nint)distancePtr);
+                currentTransform.SetPosition(transform.X, transform.Y, transform.Z);
+                TimeSinceLastApply.Restart();
             }
+            else
+            {
+                TimeSinceLastApply.Stop();
 
-            //Count++;
+                double newX = PidX.PID_iterate(transform.X, X, TimeSinceLastApply.Elapsed);
+                double newY = 0.0;
+                //double newY = PidY.PID_iterate(transform.Y, Y, TimeSinceLastApply.Elapsed);
+                double newZ = PidZ.PID_iterate(transform.Z, Z, TimeSinceLastApply.Elapsed);
+
+                Console.WriteLine("X - {0} | Y - {1} | - Z - {2}", newX, newY, newZ);
+
+                TimeSinceLastApply.Restart();
+
+                NuVec newVelocity = new NuVec();
+                newVelocity.X = (float)newX;
+                newVelocity.Y = (float)newY;
+                newVelocity.Z = (float)newZ;
+
+                //Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, transform.VZ, newVelocity.Z);
+
+                unsafe
+                {
+                    NuVec* distancePtr = &newVelocity;
+
+                    horizontalMover.SetMoveLaneVelocity((NuVec3.Handle)(nint)distancePtr);
+                }
+            }
         }
     }
 }

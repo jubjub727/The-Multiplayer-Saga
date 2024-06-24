@@ -183,7 +183,7 @@ namespace Networking
             currentTransform.GetPosition(out X, out Y, out Z);
             currentTransform.SetRotation(transform.RX, transform.RY, transform.RZ);
 
-            Console.WriteLine("Pos X - {0} | Pos Y - {1} | - Pos Z - {2}", X, Y, Z);
+            //Console.WriteLine("Pos X - {0} | Pos Y - {1} | - Pos Z - {2}", X, Y, Z);
 
             HorizontalCharacterMover.Handle horizontalMover = (HorizontalCharacterMover.Handle)(nint)_Entity.FindComponentByTypeNameRecursive("HorizontalCharacterMover", false);
             if (horizontalMover == nint.Zero)
@@ -221,13 +221,13 @@ namespace Networking
             float deltaY = transform.Y - Y;
             float deltaZ = transform.Z - Z;
 
-            if ((deltaX > 3f || deltaX < -3f) || (deltaY > 3f || deltaY < -3f) || (deltaZ > 3f || deltaZ < -3f))
+            /*if ((deltaX > 3f || deltaX < -3f) || (deltaY > 3f || deltaY < -3f) || (deltaZ > 3f || deltaZ < -3f))
             {
-                currentTransform.SetPosition(transform.X, transform.Y, transform.Z);
+                currentTransform.SetPosition(transform.X, transform.Y+0.1f, transform.Z);
                 TimeSinceLastApply.Restart();
             }
             else
-            {
+            {*/
                 TimeSinceLastApply.Stop();
 
                 double newX = PidX.PID_iterate(transform.X, X, TimeSinceLastApply.Elapsed);
@@ -235,7 +235,7 @@ namespace Networking
                 //double newY = PidY.PID_iterate(transform.Y, Y, TimeSinceLastApply.Elapsed);
                 double newZ = PidZ.PID_iterate(transform.Z, Z, TimeSinceLastApply.Elapsed);
 
-                Console.WriteLine("X - {0} | Y - {1} | - Z - {2}", newX, newY, newZ);
+                //Console.WriteLine("X - {0} | Y - {1} | - Z - {2}", newX, newY, newZ);
 
                 TimeSinceLastApply.Restart();
 
@@ -244,7 +244,7 @@ namespace Networking
                 newVelocity.Y = (float)newY;
                 newVelocity.Z = (float)newZ;
 
-                //Console.WriteLine("Distance: {0} | Current Velocity: {1} | New Velocity: {2}", transform.Z - Z, transform.VZ, newVelocity.Z);
+                Console.WriteLine("Distance: {0} | Z - {1} | Requested Z - {2}", deltaZ, Z, transform.Z);
 
                 unsafe
                 {
@@ -252,7 +252,7 @@ namespace Networking
 
                     horizontalMover.SetMoveLaneVelocity((NuVec3.Handle)(nint)distancePtr);
                 }
-            }
+            //}
         }
     }
 }
